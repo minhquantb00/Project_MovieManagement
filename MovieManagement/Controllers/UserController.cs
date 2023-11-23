@@ -57,6 +57,7 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> GetAllFoods(int pageSize = 10, int pageNumber = 1)
         {
             pageSize = -1;
+
             return Ok(await _foodService.GetAllFoods(pageSize, pageNumber));
         }
         [HttpPost("CreateSchedule")]

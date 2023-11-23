@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandlePagination;
+using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataRequests.CinemaRequest;
 using MovieManagement.Payloads.DataRequests.FoodRequest;
 using MovieManagement.Payloads.DataRequests.SeatRequest;
 using MovieManagement.Payloads.DataRequests.TicketRequest;
+using MovieManagement.Payloads.DataResponses.DataBill;
 using MovieManagement.Payloads.DataResponses.DataCinema;
 using MovieManagement.Payloads.DataResponses.DataFood;
 using MovieManagement.Payloads.DataResponses.DataMovie;
@@ -30,6 +32,7 @@ namespace MovieManagement.Controllers
         private readonly IPromotionService _promotionService;
         private readonly IMovieService _movieService;
         private readonly IFoodService _foodService;
+        private readonly IBillService _billService;
         public StaffController(
             ICinemaService iCinemaService,
             ISeatService seatService,
@@ -39,7 +42,8 @@ namespace MovieManagement.Controllers
             IRankCustomerService rankCustomerService,
             IPromotionService promotionService,
             IMovieService movieService,
-            IFoodService foodService
+            IFoodService foodService,
+            IBillService billService
             )
         {
             _iCinemaService = iCinemaService;
@@ -51,6 +55,7 @@ namespace MovieManagement.Controllers
             _promotionService = promotionService;
             _movieService = movieService;
             _foodService = foodService;
+            _billService = billService;
         }
 
         [HttpPost("CreateTicket")]
@@ -144,5 +149,29 @@ namespace MovieManagement.Controllers
             return Ok(await _seatService.UpdateSeat(roomId, requests));
         }
 
+        [HttpPost("CreateListBillTicket")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateListBillTicket(int billId, List<Request_CreateBillTicket> requests)
+        {
+            return Ok(await _billService.CreateListBillTicket(billId, requests));
+        }
+        [HttpPost("CreateListBillFood")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateListBillFood(int billId, List<Request_CreateBillFood> requests)
+        {
+            return Ok(await _billService.CreateListBillFood(billId, requests));
+        }
+        [HttpPost("CreateBillTicket")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateBillTicket(int billId, Request_CreateBillTicket request)
+        {
+            return Ok(await _billService.CreateBillTicket(billId, request));
+        }
+        [HttpPost("CreateBillFood")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateBillFood(int billId, Request_CreateBillFood request)
+        {
+            return Ok(await _billService.CreateBillFood(billId, request));
+        }
     }
 }

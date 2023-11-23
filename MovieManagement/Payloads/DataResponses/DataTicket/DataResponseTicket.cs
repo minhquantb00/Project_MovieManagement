@@ -6,5 +6,6 @@
         public string ScheduleName { get; set; }
         public int SeatNumber { get; set; }
         public int SeatLine { get; set; }
+        public double Price { get; set; }
     }
 }

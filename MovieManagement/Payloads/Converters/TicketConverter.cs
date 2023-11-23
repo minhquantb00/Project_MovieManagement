@@ -19,7 +19,8 @@ namespace MovieManagement.Payloads.Converters
                 Id = ticket.Id,
                 ScheduleName = _context.schedules.SingleOrDefault(x => x.Id == ticket.ScheduleId).Name,
                 SeatLine = _context.seats.SingleOrDefault(x => x.Id == ticket.SeatId).Line,
-                SeatNumber = _context.seats.SingleOrDefault(x => x.Id == ticket.SeatId).Number
+                SeatNumber = _context.seats.SingleOrDefault(x => x.Id == ticket.SeatId).Number,
+                Price = ticket.PriceTicket
             };
         }
     }

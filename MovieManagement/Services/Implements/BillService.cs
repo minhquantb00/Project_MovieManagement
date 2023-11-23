@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentEmail.Core;
+using Microsoft.EntityFrameworkCore;
 using MovieManagement.Entities;
+using MovieManagement.Handle.HandleGenerate;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataResponses.DataBill;
@@ -26,9 +28,45 @@ namespace MovieManagement.Services.Implements
             _billFoodConverter = billFoodConverter;
         }
 
-        public Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request)
+        public async Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request)
         {
-            throw new NotImplementedException();
+            var customer = await _context.users.SingleOrDefaultAsync(x => x.Id == request.CustomerId);
+            if(customer == null)
+            {
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thông tin khách hàng", null);
+            }
+            var promotion = await _context.promotions.SingleOrDefaultAsync(x => x.Id == request.PromotionId);
+            var bill = new Bill();
+            bill.CustomerId = customer.Id;
+            bill.TradingCode = GenerateCode.GenerateBillCode();
+            bill.CreateAt = DateTime.Now;
+            bill.CreateTime = DateTime.Now;
+            bill.Name = request.BillName;
+            bill.PromotionId = promotion == null ? 0 : request.PromotionId;
+            bill.BillTickets = null;
+            bill.BillFoods = null;
+            bill.TotalMoney = 0;
+            await _context.bills.AddAsync(bill);
+            await _context.SaveChangesAsync();
+            bill.BillTickets = await CreateListBillTicket(bill.Id, request.BillTickets);
+            bill.BillFoods = await CreateListBillFood(bill.Id,request.BillFoods);
+            double priceTicket = 0;
+            double priceFood = 0;
+            bill.BillTickets.ForEach(x =>
+            {
+                var ticket = _context.tickets.SingleOrDefault(y => y.Id == x.TicketId);
+                priceTicket += ticket.PriceTicket * x.Quantity;
+            });
+            bill.BillFoods.ForEach(x =>
+            {
+                var food = _context.foods.SingleOrDefault(y => y.Id == x.FoodId);
+                priceFood += food.Price * x.Quantity;
+            });
+            bill.TotalMoney = (priceTicket + priceFood) - ((priceTicket + priceFood) * promotion.Percent) * 1.0/100;
+            _context.bills.Update(bill);
+            await _context.SaveChangesAsync();
+            return _responseObject.ResponseSuccess("Tạo hóa đơn thành công", _billConverter.EntityToDTO(bill));
+
         }
 
         public async Task<ResponseObject<DataResponseBillFood>> CreateBillFood(int billId, Request_CreateBillFood request)
