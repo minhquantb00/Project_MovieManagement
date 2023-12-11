@@ -14,11 +14,11 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseRankCustomer> _responseObject;
         private readonly RankCustomerConverter _converter;
         public readonly AppDbContext _context;
-        public RankCustomerService(AppDbContext context, ResponseObject<DataResponseRankCustomer> responseObject, RankCustomerConverter converter)
+        public RankCustomerService(ResponseObject<DataResponseRankCustomer> responseObject, RankCustomerConverter converter)
         {
             _responseObject = responseObject;
             _converter = converter;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<ResponseObject<DataResponseRankCustomer>> CreateRankCustomer(Request_CreateRankCustomer request)

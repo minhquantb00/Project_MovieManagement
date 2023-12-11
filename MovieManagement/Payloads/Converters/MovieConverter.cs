@@ -7,9 +7,9 @@ namespace MovieManagement.Payloads.Converters
     public class MovieConverter
     {
         private readonly AppDbContext _context;
-        public MovieConverter(AppDbContext context)
+        public MovieConverter()
         {
-            _context = context;
+            _context = new AppDbContext();
         }
         public DataResponseMovie EntityToDTO(Movie movie)
         {

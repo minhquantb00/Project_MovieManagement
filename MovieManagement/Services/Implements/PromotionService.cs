@@ -14,11 +14,11 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataRepsonsePromotion> _responseObject;
         private readonly PromotionConverter _converter;
         public readonly AppDbContext _context;
-        public PromotionService( AppDbContext context, ResponseObject<DataRepsonsePromotion> responseObject, PromotionConverter converter)
+        public PromotionService(ResponseObject<DataRepsonsePromotion> responseObject, PromotionConverter converter)
         {
             _responseObject = responseObject;
             _converter = converter;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<ResponseObject<DataRepsonsePromotion>> CreatePromotion(Request_CreatePromotion request)

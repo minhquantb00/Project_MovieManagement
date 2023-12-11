@@ -14,11 +14,11 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseSchedule> _responseObject;
         private readonly SchedulesConverter _converter;
         public readonly AppDbContext _context;
-        public ScheduleService(AppDbContext context, SchedulesConverter converter, ResponseObject<DataResponseSchedule> responseObject)
+        public ScheduleService(SchedulesConverter converter, ResponseObject<DataResponseSchedule> responseObject)
         {
             _converter = converter;
             _responseObject = responseObject;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<ResponseObject<DataResponseSchedule>> CreateSchedule(Request_CreateSchedule request)
@@ -28,7 +28,7 @@ namespace MovieManagement.Services.Implements
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy phòng", null);
             }
-            var movie = await _context.movies.SingleOrDefaultAsync(x => x.Id == request.RoomId);
+            var movie = await _context.movies.SingleOrDefaultAsync(x => x.Id == request.MovieId);
             if(movie == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thông tin", null);

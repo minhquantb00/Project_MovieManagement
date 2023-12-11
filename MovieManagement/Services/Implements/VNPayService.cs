@@ -13,12 +13,12 @@ namespace MovieManagement.Services.Implements
         private readonly VNPayLibrary pay;
         private readonly AuthService _authService;
         public readonly AppDbContext _context;
-        public VNPayService(AppDbContext context, IConfiguration configuration, AuthService authService)
+        public VNPayService(IConfiguration configuration, AuthService authService)
         {
             _configuration = configuration;
             pay = new VNPayLibrary();
             _authService = authService;
-            _context = context;
+            _context = new AppDbContext();
         }
         public async Task<string> CreatePaymentUrl(int billId, HttpContext httpContext, int id)
         {
@@ -35,7 +35,7 @@ namespace MovieManagement.Services.Implements
                     pay.AddRequestData("vnp_Version", "2.1.0");
                     pay.AddRequestData("vnp_Command", "pay");
                     pay.AddRequestData("vnp_TmnCode", "YIK14C5R");
-                    pay.AddRequestData("vnp_Amount", (bill.TotalMoney).ToString());
+                    pay.AddRequestData("vnp_Amount", (bill.TotalMoney * 1000).ToString());
                     pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
                     pay.AddRequestData("vnp_CurrCode", "VND");
                     pay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(httpContext));

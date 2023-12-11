@@ -20,7 +20,7 @@ namespace MovieManagement.Services.Implements
         private readonly BillTicketConverter _billTicketConverter;
         private readonly BillFoodConverter _billFoodConverter;
         public readonly AppDbContext _context;
-        public BillService(AppDbContext context, ResponseObject<DataResponseBillFood> responseBillFoodObject, ResponseObject<DataResponseBillTicket> responseBillTicketObject, ResponseObject<DataResponseBill> responseObject, BillConverter billConverter, BillTicketConverter billTicketConverter, BillFoodConverter billFoodConverter)
+        public BillService(ResponseObject<DataResponseBillFood> responseBillFoodObject, ResponseObject<DataResponseBillTicket> responseBillTicketObject, ResponseObject<DataResponseBill> responseObject, BillConverter billConverter, BillTicketConverter billTicketConverter, BillFoodConverter billFoodConverter)
         {
             _responseBillFoodObject = responseBillFoodObject;
             _responseBillTicketObject = responseBillTicketObject;
@@ -28,7 +28,7 @@ namespace MovieManagement.Services.Implements
             _billConverter = billConverter;
             _billTicketConverter = billTicketConverter;
             _billFoodConverter = billFoodConverter;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request)
@@ -40,7 +40,7 @@ namespace MovieManagement.Services.Implements
             }
             var promotion = await _context.promotions.SingleOrDefaultAsync(x => x.Id == request.PromotionId);
             var bill = new Bill();
-            bill.CustomerId = customer.Id;
+            bill.CustomerId = request.CustomerId;
             bill.TradingCode = GenerateCode.GenerateBillCode();
             bill.CreateAt = DateTime.Now;
             bill.CreateTime = DateTime.Now;
@@ -49,6 +49,7 @@ namespace MovieManagement.Services.Implements
             bill.PromotionId = promotion == null ? 0 : request.PromotionId;
             bill.BillTickets = null;
             bill.BillFoods = null;
+            bill.IsActive = true;
             bill.TotalMoney = 0;
             await _context.bills.AddAsync(bill);
             await _context.SaveChangesAsync();

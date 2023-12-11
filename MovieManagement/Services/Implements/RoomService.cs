@@ -17,12 +17,12 @@ namespace MovieManagement.Services.Implements
         private readonly ISeatService _seatService;
         private readonly RoomConverter _converter;
         public readonly AppDbContext _context;
-        public RoomService(AppDbContext context, ResponseObject<DataResponseRoom> responseObject, RoomConverter converter, ISeatService seatService)
+        public RoomService(ResponseObject<DataResponseRoom> responseObject, RoomConverter converter, ISeatService seatService)
         {
             _responseObject = responseObject;
             _converter = converter;
             _seatService = seatService;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom> requests)
@@ -32,8 +32,9 @@ namespace MovieManagement.Services.Implements
             {
                 return null;
             }
+
             List<Room> list = new List<Room>();
-            foreach(var request in requests)
+            foreach (var request in requests)
             {
                 Room room = new Room
                 {
@@ -44,13 +45,16 @@ namespace MovieManagement.Services.Implements
                     Name = request.Name,
                     Type = request.Type
                 };
+
                 await _context.rooms.AddAsync(room);
-                await _context.SaveChangesAsync();
                 room.Seats = _seatService.CreateListSeat(room.Id, request.Request_CreateSeats);
                 list.Add(room);
             }
+            await _context.SaveChangesAsync();
+
             return list;
         }
+
 
         public async Task<ResponseObject<DataResponseRoom>> CreateRoom(int cinemaId, Request_CreateRoom request)
         {
@@ -66,7 +70,7 @@ namespace MovieManagement.Services.Implements
                 Code = GenerateCode.GenerateBillCode(),
                 Description = request.Description,
                 Name = request.Name,
-                Type = request.Type
+                Type = request.Type,
             };
             await _context.rooms.AddAsync(room);
             await _context.SaveChangesAsync();

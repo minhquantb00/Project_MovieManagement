@@ -7,6 +7,10 @@ namespace MovieManagement.Payloads.Converters
     public class SchedulesConverter
     {
         private readonly AppDbContext _context;
+        public SchedulesConverter()
+        {
+            _context = new AppDbContext();
+        }
         public DataResponseSchedule EntityToDTO(Schedule schedule)
         {
             return new DataResponseSchedule

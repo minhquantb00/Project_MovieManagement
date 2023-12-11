@@ -18,33 +18,32 @@ namespace MovieManagement.Services.Implements
         private readonly RoomConverter _roomConverter;
         private readonly ResponseObject<DataResponseSeat> _responseObject;
         public readonly AppDbContext _context;
-        public SeatService(AppDbContext context, SeatConverter seatConverter, ResponseObject<DataResponseSeat> responseObject, ResponseObject<DataResponseRoom> responseObjectRoom, RoomConverter roomConverter)
+        public SeatService(SeatConverter seatConverter, ResponseObject<DataResponseSeat> responseObject, ResponseObject<DataResponseRoom> responseObjectRoom, RoomConverter roomConverter)
         {
             _seatConverter = seatConverter;
             _responseObject = responseObject;
             _responseObjectRoom = responseObjectRoom;
             _roomConverter = roomConverter;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public List<Seat> CreateListSeat(int roomId, List<Request_CreateSeat> requests)
         {
             var room = _context.rooms.SingleOrDefault(x => x.Id == roomId);
-            if (room == null)
+            if(room == null)
             {
                 return null;
             }
             List<Seat> list = new List<Seat>();
             foreach (var request in requests)
             {
-                Seat seat = new Seat
-                {
-                    Line = request.Line,
-                    Number = request.Number,
-                    SeatTypeId = request.SeatTypeId,
-                    RoomId = roomId,
-                    SeatStatusId = 1
-                };
+                Seat seat = new Seat();
+                seat.SeatStatusId = 1;
+                seat.Line = request.Line;
+                seat.Number = request.Number;
+                seat.RoomId = roomId;
+                seat.SeatTypeId = request.SeatTypeId;
+                seat.IsActive = true;
                 list.Add(seat);
             }
             _context.seats.AddRange(list);

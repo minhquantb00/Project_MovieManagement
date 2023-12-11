@@ -16,11 +16,11 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseFood> _responseObject;
         private readonly FoodConverter _converter;
         public readonly AppDbContext _context;
-        public FoodService(AppDbContext context, ResponseObject<DataResponseFood> responseObject, FoodConverter converter)
+        public FoodService(ResponseObject<DataResponseFood> responseObject, FoodConverter converter)
         {
             _responseObject = responseObject;
             _converter = converter;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<ResponseObject<DataResponseFood>> CreateFood(Request_CreateFood request)

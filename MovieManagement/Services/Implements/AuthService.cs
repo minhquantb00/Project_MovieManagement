@@ -28,14 +28,14 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseToken> _responseTokenObject;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AuthService(AppDbContext context, ResponseObject<DataResponseUser> responseObject, UserConverter userConverter, ResponseObject<DataResponseToken> responseTokenObject, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(ResponseObject<DataResponseUser> responseObject, UserConverter userConverter, ResponseObject<DataResponseToken> responseTokenObject, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _responseObject = responseObject;
             _userConverter = userConverter;
             _responseTokenObject = responseTokenObject;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
+            _context = new AppDbContext();
         }
         #region Xử lý đăng ký và xác nhận đăng ký tài khoản
         public async Task<ResponseObject<DataResponseUser>> ConfirmCreateNewAccount(Request_ConfirmCreateAccount request)

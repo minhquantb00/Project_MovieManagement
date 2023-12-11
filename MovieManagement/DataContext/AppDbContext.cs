@@ -9,6 +9,7 @@ namespace MovieManagement.DataContext
         {
 
         }
+        public AppDbContext() { }
         public DbSet<Bill> bills { get; set; }
         public DbSet<BillFood> billFoods { get; set; }
         public DbSet<BillTicket> billTickets { get; set; }
@@ -32,10 +33,9 @@ namespace MovieManagement.DataContext
         public DbSet<ConfirmEmail> confirmEmails { get; set; }
         public DbSet<RefreshToken> refreshTokens { get; set; }
         public DbSet<BillStatus> billStatuses { get; set; }
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    //optionsBuilder.UseSqlServer("Server=localhost;Integrated Security=false;Initial Catalog=djxuyen1_coding;MultipleActiveResultSets=True;User ID= djxuyen1_quan1;Password =Kc41~55kt");
-        //    optionsBuilder.UseSqlServer("server = QUANMOVIT\\SQLEXPRESS; database=Project_Movie; integrated security = sspi; encrypt = true; trustservercertificate = true;");
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("server = QUANMOVIT\\SQLEXPRESS; database=Project_Movie; integrated security = sspi; encrypt = true; trustservercertificate = true;");
+        }
     }
 }

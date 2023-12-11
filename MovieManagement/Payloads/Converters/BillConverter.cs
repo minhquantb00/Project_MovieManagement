@@ -10,11 +10,11 @@ namespace MovieManagement.Payloads.Converters
         private readonly AppDbContext _context;
         private readonly BillFoodConverter _billFoodConverter;
         private readonly BillTicketConverter _billTicketConverter;
-        public BillConverter(AppDbContext context, BillTicketConverter billTicketConverter, BillFoodConverter billFoodConverter)
+        public BillConverter()
         {
-            _context = context;
-            _billFoodConverter = billFoodConverter;
-            _billTicketConverter = billTicketConverter;
+            _context = new AppDbContext();
+            _billFoodConverter = new BillFoodConverter();
+            _billTicketConverter = new BillTicketConverter();
         }
         public DataResponseBill EntityToDTO(Bill bill)
         {

@@ -18,112 +18,41 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseCinema> _responseObject;
         private readonly ResponseObject<DataResponseRoom> _responseObjectRoom;
         private readonly RoomConverter _roomConverter;
-        public readonly AppDbContext _context;
-        public CinemaService(AppDbContext context, ISeatService iSeatService, CinemaConverter cinemaConverter, ResponseObject<DataResponseCinema> responseObject, ResponseObject<DataResponseRoom> responseObjectRoom, RoomConverter roomConverter)
+        private readonly AppDbContext _context;
+        private readonly IRoomService _roomService;
+
+        public CinemaService(ISeatService iSeatService, CinemaConverter cinemaConverter, ResponseObject<DataResponseCinema> responseObject, ResponseObject<DataResponseRoom> responseObjectRoom, RoomConverter roomConverter, IRoomService roomService)
         {
             _iSeatService = iSeatService;
             _cinemaConverter = cinemaConverter;
             _responseObject = responseObject;
             _responseObjectRoom = responseObjectRoom;
             _roomConverter = roomConverter;
-            _context = context;
+            _context = new AppDbContext();
+            _roomService = roomService;
         }
 
         public async Task<ResponseObject<DataResponseCinema>> CreateCinema(Request_CreateCinema request)
         {
-            if (string.IsNullOrWhiteSpace(request.Address) || string.IsNullOrWhiteSpace(request.NameOfCinema) || string.IsNullOrWhiteSpace(request.Description))
+            if(string.IsNullOrWhiteSpace(request.Address) || string.IsNullOrWhiteSpace(request.Description) || string.IsNullOrWhiteSpace(request.Code) || string.IsNullOrWhiteSpace(request.NameOfCinema))
             {
                 return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Vui lòng điền đầy đủ thông tin", null);
             }
-
-            Cinema cinema = new Cinema
+            var cinema = new Cinema
             {
-                NameOfCinema = request.NameOfCinema,
                 Address = request.Address,
-                Code = new Random().Next(100000, 999999).ToString(),
+                Code = request.Code,
                 Description = request.Description,
-                Room = null
+                NameOfCinema = request.NameOfCinema,
+                Room = null,
+                IsActive = true,
             };
-
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                try
-                {
-                    await _context.cinemas.AddAsync(cinema);
-                    await _context.SaveChangesAsync();
-
-                    cinema.Room = await CreateListRoom(cinema.Id, request.Request_CreateRooms);
-                    _context.cinemas.Update(cinema);
-                    await _context.SaveChangesAsync();
-
-                    scope.Complete();
-
-                    return _responseObject.ResponseSuccess("Thêm thông tin rạp thành công", _cinemaConverter.EntityToDTO(cinema));
-                }
-                catch (Exception ex)
-                {
-                    // Handle the exception, log it, or return an error response.
-                    return _responseObject.ResponseError(StatusCodes.Status500InternalServerError, ex.Message, null);
-                }
-            }
-        }
-
-        // Other methods remain the same
-
-
-        public async Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom> requests)
-        {
-            var cinema = await _context.cinemas.SingleOrDefaultAsync(x => x.Id == cinemaId);
-            if (cinema == null)
-            {
-                return null;
-            }
-
-            List<Room> list = new List<Room>();
-            foreach (var request in requests)
-            {
-                Room room = new Room
-                {
-                    Name = request.Name,
-                    Description = request.Description,
-                    Capacity = request.Capacity,
-                    Type = request.Type,
-                    CinemaId = cinemaId,
-                    Code = new Random().Next(100000, 999999).ToString(),
-                    Seats = null
-                };
-
-                await _context.rooms.AddAsync(room);
-                await _context.SaveChangesAsync();
-
-                room.Seats = _iSeatService.CreateListSeat(room.Id, request.Request_CreateSeats);
-                _context.rooms.Update(room);
-                await _context.SaveChangesAsync();
-
-                list.Add(room);
-            }
-            return list;
-        }
-
-
-        public async Task<ResponseObject<DataResponseRoom>> CreateRoom(int cinemaId, Request_CreateRoom request)
-        {
-            var cinema = await _context.cinemas.SingleOrDefaultAsync(x => x.Id == cinemaId);
-            if(cinema == null)
-            {
-                return _responseObjectRoom.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thông tin rạp", null);
-            }
-            Room room = new Room();
-            room.Name = request.Name;
-            room.Description = request.Description;
-            room.Capacity = request.Capacity;
-            room.Type = request.Type;
-            room.CinemaId = cinemaId;
-            room.Code = new Random().Next(100000, 999999).ToString();
-            room.Seats = _iSeatService.CreateListSeat(room.Id, request.Request_CreateSeats);
-            await _context.rooms.AddAsync(room);
+            await _context.cinemas.AddAsync(cinema);
             await _context.SaveChangesAsync();
-            return _responseObjectRoom.ResponseSuccess("Thêm room thành công", _roomConverter.EntityToDTO(room));
+            cinema.Room = await _roomService.CreateListRoom(cinema.Id, request.Request_CreateRooms);
+            _context.cinemas.Update(cinema);
+            await _context.SaveChangesAsync();
+            return _responseObject.ResponseSuccess("Thêm rạp thành công", _cinemaConverter.EntityToDTO(cinema));
         }
 
         public async Task<PageResult<DataResponseCinema>> GetListCinema(int pageSize, int pageNumber)

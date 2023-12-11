@@ -1,4 +1,5 @@
-﻿using MovieManagement.Entities;
+﻿using MovieManagement.DataContext;
+using MovieManagement.Entities;
 
 namespace MovieManagement.Handle.HandleEmail
 {
@@ -59,7 +60,7 @@ namespace MovieManagement.Handle.HandleEmail
                         <td>{bill.TradingCode}</td>
                         <td>{bill.Name}</td>
                         <td>{bill.TotalMoney}</td>
-                        <td>{bill.Customer.Name}</td>
+                        <td>{new AppDbContext().users.SingleOrDefault(x => x.Id == bill.CustomerId).Name}</td>
                         <td>{bill.CreateAt}</td>
                     </tr>
                 </table>
@@ -77,8 +78,10 @@ namespace MovieManagement.Handle.HandleEmail
 
             htmlContent += $@"
                        <tr>
-                        <td style=""text-align: center;"">Tổng tiền</td>
-                        <td colspan=""3"" style=""text-align: right;"">{bill.TotalMoney}</td>
+                        <td style=""text-align: center;"">{new AppDbContext().billTickets.SingleOrDefault(x => x.BillId == bill.Id).Quantity}</td>
+                        <td style=""text-align: center;"">{new AppDbContext().foods.SingleOrDefault(x => x.BillFoods.Any(y => y.BillId == bill.Id)).NameOfFood}</td>
+                        <td style=""text-align: center;"">{new AppDbContext().billFoods.SingleOrDefault(x => x.BillId == bill.Id).Quantity}</td>
+                        <td colspan=""3"" style=""text-align: center;"">{bill.TotalMoney}</td>
                     </tr>
                 </table>
                 

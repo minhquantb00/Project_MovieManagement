@@ -16,11 +16,11 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseMovie> _responseObject;
         private readonly MovieConverter _converter;
         public readonly AppDbContext _context;
-        public MovieService(AppDbContext context, MovieConverter converter, ResponseObject<DataResponseMovie> responseObject)
+        public MovieService(MovieConverter converter, ResponseObject<DataResponseMovie> responseObject)
         {
             _converter = converter;
             _responseObject = responseObject;
-            _context = context;
+            _context = new AppDbContext();
         }
         public async Task<ResponseObject<DataResponseMovie>> CreateMovie(Request_CreateMovie request)
         {

@@ -10,11 +10,11 @@ namespace MovieManagement.Payloads.Converters
         private readonly SeatConverter _seatConverter;
         private readonly AppDbContext _context;
         private readonly SchedulesConverter _scheduleConverter;
-        public RoomConverter(SeatConverter seatConverter, AppDbContext context, SchedulesConverter scheduleConverter)
+        public RoomConverter()
         {
-            _context = context;
-            _seatConverter = seatConverter;
-            _scheduleConverter = scheduleConverter;
+            _context = new AppDbContext();
+            _seatConverter = new SeatConverter();
+            _scheduleConverter = new SchedulesConverter();
         }
         public DataResponseRoom EntityToDTO(Room room)
         {
@@ -25,7 +25,7 @@ namespace MovieManagement.Payloads.Converters
                 Description = room.Description,
                 Name = room.Name,
                 Type = room.Type,
-                DataResponseSeats = _context.seats.Include(x => x.SeatType).Include(x => x.SeatStatus).Include(x => x.Tickets).Include(x => x.Room).Where(x => x.RoomId == room.Id).Select(x => _seatConverter.EntityToDTO(x)),
+                DataResponseSeats = _context.seats.Where(x => x.RoomId == room.Id).Select(x => _seatConverter.EntityToDTO(x)).AsQueryable(),
             };
         }
     }

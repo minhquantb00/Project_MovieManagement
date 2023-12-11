@@ -55,41 +55,40 @@ namespace MovieManagement.Controllers
             _vnpayService = vnpayService;
         }
         [HttpGet("GetListCinema")]
-        [Authorize(Roles = "Admin, Manager, Staff, User")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> GetListCinema(int pageSize = 10, int pageNumber = 1)
         {
             pageSize = -1;
             return Ok(await _iCinemaService.GetListCinema(pageSize, pageNumber));
         }
         [HttpGet("GetAllFoods")]
-        [Authorize(Roles = "Admin, Manager, Staff, User")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> GetAllFoods(int pageSize = 10, int pageNumber = 1)
         {
-            pageSize = -1;
 
             return Ok(await _foodService.GetAllFoods(pageSize, pageNumber));
         }
         [HttpPost("CreateSchedule")]
-        [Authorize(Roles = "Admin, Manager, Staff, User")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> CreateSchedule(Request_CreateSchedule request)
         {
             return Ok(await _scheduleService.CreateSchedule(request));
         }
         [HttpPut("UpdateSchedule")]
-        [Authorize(Roles = "Admin, Manager, Staff, User")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> UpdateSchedule(Request_UpdateSchedule request)
         {
             return Ok(await _scheduleService.UpdateSchedule(request));
         }
         [HttpGet("GetSeatByRoom")]
-        [Authorize(Roles = "Admin, Manager, Staff, User")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> GetSeatByRoom(int roomId, int pageSize = 10, int pageNumber = 1)
         {
             pageSize = -1;
             return Ok(await _seatService.GetSeatByRoom(roomId, pageSize, pageNumber));
         }
         [HttpGet("GetSeatByStatus")]
-        [Authorize(Roles = "Admin, Manager, Staff, User")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> GetSeatByStatus(int statusId, int pageSize, int pageNumber)
         {
             pageSize = -1;
@@ -97,31 +96,31 @@ namespace MovieManagement.Controllers
         }
 
         [HttpPost("CreateListBillTicket")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> CreateListBillTicket(int billId, List<Request_CreateBillTicket> requests)
         {
             return Ok(await _billService.CreateListBillTicket(billId, requests));
         }
         [HttpPost("CreateListBillFood")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> CreateListBillFood(int billId, List<Request_CreateBillFood> requests)
         {
             return Ok(await _billService.CreateListBillFood(billId, requests));
         }
         [HttpPost("CreateBillTicket")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> CreateBillTicket(int billId, Request_CreateBillTicket request)
         {
             return Ok(await _billService.CreateBillTicket(billId, request));
         }
         [HttpPost("CreateBillFood")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> CreateBillFood(int billId, Request_CreateBillFood request)
         {
             return Ok(await _billService.CreateBillFood(billId, request));
         }
         [HttpPost("CreateBill")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
+        //[Authorize(Roles = "Admin, Manager, Staff, User")]
         public async Task<IActionResult> CreateBill(Request_CreateBill request)
         {
             return Ok(await _billService.CreateBill(request));

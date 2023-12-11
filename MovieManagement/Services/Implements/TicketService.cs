@@ -15,11 +15,11 @@ namespace MovieManagement.Services.Implements
         private readonly ResponseObject<DataResponseTicket> _responseObject;
         private readonly TicketConverter _ticketConverter;
         public readonly AppDbContext _context;
-        public TicketService(AppDbContext context, ResponseObject<DataResponseTicket> responseObject, TicketConverter ticketConverter)
+        public TicketService(ResponseObject<DataResponseTicket> responseObject, TicketConverter ticketConverter)
         {
             _responseObject = responseObject;
             _ticketConverter = ticketConverter;
-            _context = context;
+            _context = new AppDbContext();
         }
 
         public async Task<ResponseObject<DataResponseTicket>> CreateTicket(Request_CreateTicket request)

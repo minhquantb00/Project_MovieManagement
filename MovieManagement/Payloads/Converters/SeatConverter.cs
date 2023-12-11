@@ -8,35 +8,24 @@ namespace MovieManagement.Payloads.Converters
     public class SeatConverter
     {
         private readonly AppDbContext _context;
-        public SeatConverter(AppDbContext context)
+        public SeatConverter()
         {
-            _context = context;
+            _context = new AppDbContext();
         }
         public DataResponseSeat EntityToDTO(Seat seat)
         {
-            var seatInfo = _context.seats
-                .Include(s => s.Room)
-                .Include(s => s.SeatStatus)
-                .Include(s => s.SeatType)
-                .AsNoTracking()
-                .SingleOrDefault(s => s.Id == seat.Id);
-
-            if (seatInfo == null)
-            {
-                // Xử lý trường hợp không tìm thấy thông tin ghế.
-                return null;
-            }
 
             return new DataResponseSeat
             {
-                Id = seatInfo.Id,
-                Line = seatInfo.Line,
-                Number = seatInfo.Number,
-                RoomName = seatInfo.Room?.Name, // Sử dụng Room từ seatInfo
-                SeatStatusName = seatInfo.SeatStatus?.NameStatus, // Sử dụng SeatStatus từ seatInfo
-                SeatTypeName = seatInfo.SeatType?.NameType // Sử dụng SeatType từ seatInfo
+                Id = seat.Id,
+                Line = seat.Line,
+                Number = seat.Number,
+                RoomName = _context.rooms.SingleOrDefault(x => x.Seats.Any(y => y.Id == seat.Id)).Name,
+                SeatStatusName = _context.seatsStatus.SingleOrDefault(x => x.Seats.Any(y => y.Id == seat.Id)).NameStatus,
+                SeatTypeName = _context.seatTypes.SingleOrDefault(x => x.Seats.Any(y => y.Id == seat.Id)).NameType
             };
         }
+
 
     }
 }
