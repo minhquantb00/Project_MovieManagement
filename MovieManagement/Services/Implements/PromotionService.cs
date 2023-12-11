@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.PromotionRequest;
@@ -8,14 +9,16 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class PromotionService : BaseService, IPromotionService
+    public class PromotionService : IPromotionService
     {
         private readonly ResponseObject<DataRepsonsePromotion> _responseObject;
         private readonly PromotionConverter _converter;
-        public PromotionService(ResponseObject<DataRepsonsePromotion> responseObject, PromotionConverter converter)
+        public readonly AppDbContext _context;
+        public PromotionService( AppDbContext context, ResponseObject<DataRepsonsePromotion> responseObject, PromotionConverter converter)
         {
             _responseObject = responseObject;
             _converter = converter;
+            _context = context;
         }
 
         public async Task<ResponseObject<DataRepsonsePromotion>> CreatePromotion(Request_CreatePromotion request)

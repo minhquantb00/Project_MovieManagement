@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandleImage;
 using MovieManagement.Handle.HandlePagination;
@@ -10,14 +11,16 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class MovieService : BaseService, IMovieService
+    public class MovieService : IMovieService
     {
         private readonly ResponseObject<DataResponseMovie> _responseObject;
         private readonly MovieConverter _converter;
-        public MovieService(MovieConverter converter, ResponseObject<DataResponseMovie> responseObject)
+        public readonly AppDbContext _context;
+        public MovieService(AppDbContext context, MovieConverter converter, ResponseObject<DataResponseMovie> responseObject)
         {
             _converter = converter;
             _responseObject = responseObject;
+            _context = context;
         }
         public async Task<ResponseObject<DataResponseMovie>> CreateMovie(Request_CreateMovie request)
         {

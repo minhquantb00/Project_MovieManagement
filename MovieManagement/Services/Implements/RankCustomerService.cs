@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.RankCustomerRequest;
@@ -8,14 +9,16 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class RankCustomerService : BaseService, IRankCustomerService
+    public class RankCustomerService : IRankCustomerService
     {
         private readonly ResponseObject<DataResponseRankCustomer> _responseObject;
         private readonly RankCustomerConverter _converter;
-        public RankCustomerService(ResponseObject<DataResponseRankCustomer> responseObject, RankCustomerConverter converter)
+        public readonly AppDbContext _context;
+        public RankCustomerService(AppDbContext context, ResponseObject<DataResponseRankCustomer> responseObject, RankCustomerConverter converter)
         {
             _responseObject = responseObject;
             _converter = converter;
+            _context = context;
         }
 
         public async Task<ResponseObject<DataResponseRankCustomer>> CreateRankCustomer(Request_CreateRankCustomer request)

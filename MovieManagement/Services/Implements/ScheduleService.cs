@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.ScheduleRequest;
@@ -8,14 +9,16 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class ScheduleService : BaseService, IScheduleService
+    public class ScheduleService : IScheduleService
     {
         private readonly ResponseObject<DataResponseSchedule> _responseObject;
         private readonly SchedulesConverter _converter;
-        public ScheduleService(SchedulesConverter converter, ResponseObject<DataResponseSchedule> responseObject)
+        public readonly AppDbContext _context;
+        public ScheduleService(AppDbContext context, SchedulesConverter converter, ResponseObject<DataResponseSchedule> responseObject)
         {
             _converter = converter;
             _responseObject = responseObject;
+            _context = context;
         }
 
         public async Task<ResponseObject<DataResponseSchedule>> CreateSchedule(Request_CreateSchedule request)

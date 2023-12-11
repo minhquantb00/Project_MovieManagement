@@ -10,11 +10,11 @@ namespace MovieManagement.Payloads.Converters
         private readonly AppDbContext _context;
         private readonly BillFoodConverter _billFoodConverter;
         private readonly BillTicketConverter _billTicketConverter;
-        public BillConverter()
+        public BillConverter(AppDbContext context, BillTicketConverter billTicketConverter, BillFoodConverter billFoodConverter)
         {
-            _context = new AppDbContext();
-            _billFoodConverter = new BillFoodConverter();
-            _billTicketConverter = new BillTicketConverter();
+            _context = context;
+            _billFoodConverter = billFoodConverter;
+            _billTicketConverter = billTicketConverter;
         }
         public DataResponseBill EntityToDTO(Bill bill)
         {
@@ -25,6 +25,7 @@ namespace MovieManagement.Payloads.Converters
                 Id = bill.Id,
                 Name = bill.Name,
                 TotalMoney = bill.TotalMoney,
+                BillStatusName = _context.billStatuses.SingleOrDefault(x => x.Id == bill.BillStatusId).Name,
                 PromotionPercent = _context.promotions.SingleOrDefault(x => x.Id == bill.PromotionId).Percent,
                 TradingCode = bill.TradingCode,
                 BillFoods = _context.billFoods.Where(x => x.BillId == bill.Id).Select(x => _billFoodConverter.EntityToDTO(x)),

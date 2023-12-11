@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandleGenerate;
 using MovieManagement.Handle.HandlePagination;
@@ -10,16 +11,18 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class RoomService : BaseService, IRoomService
+    public class RoomService : IRoomService
     {
         private readonly ResponseObject<DataResponseRoom> _responseObject;
         private readonly ISeatService _seatService;
         private readonly RoomConverter _converter;
-        public RoomService(ResponseObject<DataResponseRoom> responseObject, RoomConverter converter, ISeatService seatService)
+        public readonly AppDbContext _context;
+        public RoomService(AppDbContext context, ResponseObject<DataResponseRoom> responseObject, RoomConverter converter, ISeatService seatService)
         {
             _responseObject = responseObject;
             _converter = converter;
             _seatService = seatService;
+            _context = context;
         }
 
         public async Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom> requests)

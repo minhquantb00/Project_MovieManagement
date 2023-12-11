@@ -149,29 +149,6 @@ namespace MovieManagement.Controllers
             return Ok(await _seatService.UpdateSeat(roomId, requests));
         }
 
-        [HttpPost("CreateListBillTicket")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> CreateListBillTicket(int billId, List<Request_CreateBillTicket> requests)
-        {
-            return Ok(await _billService.CreateListBillTicket(billId, requests));
-        }
-        [HttpPost("CreateListBillFood")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> CreateListBillFood(int billId, List<Request_CreateBillFood> requests)
-        {
-            return Ok(await _billService.CreateListBillFood(billId, requests));
-        }
-        [HttpPost("CreateBillTicket")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> CreateBillTicket(int billId, Request_CreateBillTicket request)
-        {
-            return Ok(await _billService.CreateBillTicket(billId, request));
-        }
-        [HttpPost("CreateBillFood")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> CreateBillFood(int billId, Request_CreateBillFood request)
-        {
-            return Ok(await _billService.CreateBillFood(billId, request));
-        }
+        
     }
 }

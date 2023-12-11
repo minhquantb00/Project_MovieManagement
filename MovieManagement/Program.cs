@@ -17,6 +17,12 @@ using MovieManagement.Payloads.DataResponses.DataPromotion;
 using MovieManagement.Payloads.DataResponses.DataRankCustomer;
 using MovieManagement.Payloads.DataResponses.DataMovie;
 using MovieManagement.Payloads.DataResponses.DataFood;
+using MovieManagement.DataContext;
+using MovieManagement.Entities;
+using BcryptNet = BCrypt.Net.BCrypt;
+using MovieManagement.Payloads.DataResponses.DataBill;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,40 +47,67 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
 });
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddSingleton<UserConverter>();
-builder.Services.AddSingleton<ResponseObject<DataResponseUser>>();
-builder.Services.AddSingleton<ResponseObject<DataResponseToken>>();
 builder.Services.AddScoped<ICinemaService, CinemaService>();
 builder.Services.AddScoped<ISeatService , SeatService>();  
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
-builder.Services.AddSingleton<ResponseObject<DataResponseCinema>>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IRankCustomerService, RankCustomerService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IVNPayService, VNPayService>();
+builder.Services.AddScoped<IBillService, BillService>();
+
+builder.Services.AddSingleton<ResponseObject<DataResponseUser>>();
+builder.Services.AddSingleton<ResponseObject<DataResponseToken>>();
+builder.Services.AddSingleton<ResponseObject<DataResponseCinema>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseMovie>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseRoom>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseFood>>();
-builder.Services.AddSingleton<RoomConverter>();
-builder.Services.AddSingleton<PromotionConverter>();
 builder.Services.AddSingleton<ResponseObject<DataRepsonsePromotion>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseRankCustomer>>();
-builder.Services.AddSingleton<RankCustomerConverter>();
 builder.Services.AddSingleton<ResponseObject<DataResponseMovie>>();
-builder.Services.AddSingleton<MovieConverter>();
-builder.Services.AddSingleton<FoodConverter>();
-builder.Services.AddSingleton<CinemaConverter>();
 builder.Services.AddSingleton<ResponseObject<DataResponseCinema>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseSeat>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseTicket>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseSchedule>>();
-builder.Services.AddSingleton<SeatConverter>();
-builder.Services.AddSingleton<CinemaConverter>();
-builder.Services.AddSingleton<TicketConverter>();
-builder.Services.AddSingleton<SchedulesConverter>();
+builder.Services.AddSingleton<ResponseObject<DataResponseBill>>();
+builder.Services.AddSingleton<ResponseObject<DataResponseBillFood>>();
+builder.Services.AddSingleton<ResponseObject<DataResponseBillTicket>>();
+
+builder.Services.AddScoped<UserConverter>();
+builder.Services.AddScoped<TicketConverter>();
+builder.Services.AddScoped<SeatConverter>();
+builder.Services.AddScoped<SchedulesConverter>();
+builder.Services.AddScoped<RoomConverter>();
+builder.Services.AddScoped<RankCustomerConverter>();
+builder.Services.AddScoped<PromotionConverter>();
+builder.Services.AddScoped<MovieConverter>();
+builder.Services.AddScoped<CinemaConverter>();
+builder.Services.AddScoped<FoodConverter>();
+builder.Services.AddScoped<BillConverter>();
+builder.Services.AddScoped<BillTicketConverter>();
+builder.Services.AddScoped<BillFoodConverter>();
+builder.Services.AddScoped<AuthService>();
+
+
+//builder.Services.AddSingleton<UserConverter>();
+//builder.Services.AddSingleton<TicketConverter>();
+//builder.Services.AddSingleton<SeatConverter>();
+//builder.Services.AddSingleton<SchedulesConverter>();
+//builder.Services.AddSingleton<RoomConverter>();
+//builder.Services.AddSingleton<RankCustomerConverter>();
+//builder.Services.AddSingleton<PromotionConverter>();
+//builder.Services.AddSingleton<MovieConverter>();
+//builder.Services.AddSingleton<CinemaConverter>();
+//builder.Services.AddSingleton<FoodConverter>();
+//builder.Services.AddSingleton<BillConverter>();
+//builder.Services.AddSingleton<BillTicketConverter>();
+//builder.Services.AddSingleton<BillFoodConverter>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors();
 builder.Services.AddHttpClient();
@@ -99,6 +132,7 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod();
     });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

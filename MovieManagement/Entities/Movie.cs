@@ -11,7 +11,7 @@
         public string Language { get; set; }
         public int MovieTypeId { get; set; }
         public string Name { get; set; }
-        public int RateId { get; set; }
+        public int? RateId { get; set; }
         public string Trailer { get; set; }
         public bool? IsActive { get; set; } = true;
         public MovieType? MovieType { get; set; }

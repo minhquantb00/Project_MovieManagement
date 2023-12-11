@@ -7,9 +7,9 @@ namespace MovieManagement.Payloads.Converters
     public class BillFoodConverter
     {
         private readonly AppDbContext _context;
-        public BillFoodConverter()
+        public BillFoodConverter(AppDbContext context)
         {
-            _context = new AppDbContext();
+            _context = context;
         }
         public DataResponseBillFood EntityToDTO(BillFood billFood)
         {

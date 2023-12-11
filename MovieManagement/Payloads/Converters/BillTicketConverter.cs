@@ -8,9 +8,9 @@ namespace MovieManagement.Payloads.Converters
     public class BillTicketConverter
     {
         private readonly AppDbContext _context;
-        public BillTicketConverter()
+        public BillTicketConverter(AppDbContext context)
         {
-            _context = new AppDbContext();
+            _context = context;
         }
         public DataResponseBillTicket EntityToDTO(BillTicket ticket)
         {

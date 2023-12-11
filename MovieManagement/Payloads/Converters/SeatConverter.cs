@@ -1,4 +1,5 @@
-﻿using MovieManagement.DataContext;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Payloads.DataResponses.DataSeat;
 
@@ -6,24 +7,36 @@ namespace MovieManagement.Payloads.Converters
 {
     public class SeatConverter
     {
-        private readonly RoomConverter roomConverter;
         private readonly AppDbContext _context;
-        public SeatConverter()
+        public SeatConverter(AppDbContext context)
         {
-            _context = new AppDbContext();
-            roomConverter = new RoomConverter();
+            _context = context;
         }
         public DataResponseSeat EntityToDTO(Seat seat)
         {
+            var seatInfo = _context.seats
+                .Include(s => s.Room)
+                .Include(s => s.SeatStatus)
+                .Include(s => s.SeatType)
+                .AsNoTracking()
+                .SingleOrDefault(s => s.Id == seat.Id);
+
+            if (seatInfo == null)
+            {
+                // Xử lý trường hợp không tìm thấy thông tin ghế.
+                return null;
+            }
+
             return new DataResponseSeat
             {
-                Id = seat.Id,
-                Line = seat.Line,
-                Number = seat.Number,
-                RoomName = _context.rooms.SingleOrDefault(x => x.Id == seat.RoomId).Name,
-                SeatStatusName = _context.seatsStatus.SingleOrDefault(x => x.Id == seat.SeatStatusId).NameStatus,
-                SeatTypeName = _context.seatTypes.SingleOrDefault(x => x.Id == seat.SeatTypeId).NameType
+                Id = seatInfo.Id,
+                Line = seatInfo.Line,
+                Number = seatInfo.Number,
+                RoomName = seatInfo.Room?.Name, // Sử dụng Room từ seatInfo
+                SeatStatusName = seatInfo.SeatStatus?.NameStatus, // Sử dụng SeatStatus từ seatInfo
+                SeatTypeName = seatInfo.SeatType?.NameType // Sử dụng SeatType từ seatInfo
             };
         }
+
     }
 }

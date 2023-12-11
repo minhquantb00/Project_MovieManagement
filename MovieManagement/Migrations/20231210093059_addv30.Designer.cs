@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieManagement.DataContext;
 
@@ -11,9 +12,11 @@ using MovieManagement.DataContext;
 namespace MovieManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231210093059_addv30")]
+    partial class addv30
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace MovieManagement.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BillStatusId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
@@ -60,8 +60,6 @@ namespace MovieManagement.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BillStatusId");
 
                     b.HasIndex("CustomerId");
 
@@ -94,23 +92,6 @@ namespace MovieManagement.Migrations
                     b.HasIndex("FoodId");
 
                     b.ToTable("billFoods");
-                });
-
-            modelBuilder.Entity("MovieManagement.Entities.BillStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("billStatuses");
                 });
 
             modelBuilder.Entity("MovieManagement.Entities.BillTicket", b =>
@@ -750,12 +731,6 @@ namespace MovieManagement.Migrations
 
             modelBuilder.Entity("MovieManagement.Entities.Bill", b =>
                 {
-                    b.HasOne("MovieManagement.Entities.BillStatus", null)
-                        .WithMany("Bills")
-                        .HasForeignKey("BillStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MovieManagement.Entities.User", "Customer")
                         .WithMany("Bills")
                         .HasForeignKey("CustomerId")
@@ -967,11 +942,6 @@ namespace MovieManagement.Migrations
                     b.Navigation("BillFoods");
 
                     b.Navigation("BillTickets");
-                });
-
-            modelBuilder.Entity("MovieManagement.Entities.BillStatus", b =>
-                {
-                    b.Navigation("Bills");
                 });
 
             modelBuilder.Entity("MovieManagement.Entities.Cinema", b =>

@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Handle.HandlePagination;
+using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataRequests.ScheduleRequest;
 using MovieManagement.Payloads.DataResponses.DataSchedule;
 using MovieManagement.Payloads.DataResponses.DataSeat;
 using MovieManagement.Payloads.Responses;
+using MovieManagement.Services.Implements;
 using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Controllers
@@ -23,6 +26,8 @@ namespace MovieManagement.Controllers
         private readonly IPromotionService _promotionService;
         private readonly IMovieService _movieService;
         private readonly IFoodService _foodService;
+        private readonly IBillService _billService;
+        private readonly IVNPayService _vnpayService;
         public UserController(
             ICinemaService iCinemaService,
             ISeatService seatService,
@@ -32,7 +37,9 @@ namespace MovieManagement.Controllers
             IRankCustomerService rankCustomerService,
             IPromotionService promotionService,
             IMovieService movieService,
-            IFoodService foodService
+            IFoodService foodService,
+            IBillService billService,
+            IVNPayService vnpayService
             )
         {
             _iCinemaService = iCinemaService;
@@ -44,6 +51,8 @@ namespace MovieManagement.Controllers
             _promotionService = promotionService;
             _movieService = movieService;
             _foodService = foodService;
+            _billService = billService;
+            _vnpayService = vnpayService;
         }
         [HttpGet("GetListCinema")]
         [Authorize(Roles = "Admin, Manager, Staff, User")]
@@ -87,6 +96,52 @@ namespace MovieManagement.Controllers
             return Ok(await _seatService.GetSeatByStatus(statusId, pageSize, pageNumber));
         }
 
+        [HttpPost("CreateListBillTicket")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateListBillTicket(int billId, List<Request_CreateBillTicket> requests)
+        {
+            return Ok(await _billService.CreateListBillTicket(billId, requests));
+        }
+        [HttpPost("CreateListBillFood")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateListBillFood(int billId, List<Request_CreateBillFood> requests)
+        {
+            return Ok(await _billService.CreateListBillFood(billId, requests));
+        }
+        [HttpPost("CreateBillTicket")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateBillTicket(int billId, Request_CreateBillTicket request)
+        {
+            return Ok(await _billService.CreateBillTicket(billId, request));
+        }
+        [HttpPost("CreateBillFood")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateBillFood(int billId, Request_CreateBillFood request)
+        {
+            return Ok(await _billService.CreateBillFood(billId, request));
+        }
+        [HttpPost("CreateBill")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> CreateBill(Request_CreateBill request)
+        {
+            return Ok(await _billService.CreateBill(request));
+        }
 
+        [HttpGet]
+        [Route("/Vnpay/return")]
+        public async Task<IActionResult> Return()
+        {
+            var vnpayData = HttpContext.Request.Query;
+
+            return Ok(await _vnpayService.VNPayReturn(vnpayData));
+        }
+        [HttpPost]
+        [Route("/Vnpay/CreatePaymentUrl")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> CreatePaymentUrl(int billId)
+        {
+            int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
+            return Ok(await _vnpayService.CreatePaymentUrl(billId, HttpContext, id));
+        }
     }
 }

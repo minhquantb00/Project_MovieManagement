@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandleImage;
 using MovieManagement.Handle.HandlePagination;
@@ -10,14 +11,16 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class FoodService : BaseService, IFoodService
+    public class FoodService : IFoodService
     {
         private readonly ResponseObject<DataResponseFood> _responseObject;
         private readonly FoodConverter _converter;
-        public FoodService(ResponseObject<DataResponseFood> responseObject, FoodConverter converter)
+        public readonly AppDbContext _context;
+        public FoodService(AppDbContext context, ResponseObject<DataResponseFood> responseObject, FoodConverter converter)
         {
             _responseObject = responseObject;
             _converter = converter;
+            _context = context;
         }
 
         public async Task<ResponseObject<DataResponseFood>> CreateFood(Request_CreateFood request)

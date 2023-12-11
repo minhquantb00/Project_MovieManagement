@@ -8,10 +8,10 @@ namespace MovieManagement.Payloads.Converters
     {
         private readonly AppDbContext _context;
         private readonly RoomConverter _roomConverter;
-        public CinemaConverter()
+        public CinemaConverter(AppDbContext context, RoomConverter roomConverter)
         {
-            _roomConverter = new RoomConverter();
-            _context = new AppDbContext();
+            _roomConverter = roomConverter;
+            _context = context;
         }
         public DataResponseCinema EntityToDTO(Cinema cinema)
         {
@@ -21,7 +21,7 @@ namespace MovieManagement.Payloads.Converters
                 Address = cinema.Address,
                 Description = cinema.Description,
                 NameOfCinema = cinema.NameOfCinema,
-                Room = _context.rooms.Select(x => _roomConverter.EntityToDTO(x))
+                Room = _context.rooms.Where(x => x.CinemaId == cinema.Id).Select(x => _roomConverter.EntityToDTO(x))
             };
         }
     }

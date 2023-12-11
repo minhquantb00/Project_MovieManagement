@@ -1,5 +1,6 @@
 ﻿using FluentEmail.Core;
 using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandleGenerate;
 using MovieManagement.Payloads.Converters;
@@ -10,7 +11,7 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class BillService : BaseService, IBillService
+    public class BillService : IBillService
     {
         private readonly ResponseObject<DataResponseBillFood> _responseBillFoodObject;
         private readonly ResponseObject<DataResponseBillTicket> _responseBillTicketObject;
@@ -18,7 +19,8 @@ namespace MovieManagement.Services.Implements
         private readonly BillConverter _billConverter;
         private readonly BillTicketConverter _billTicketConverter;
         private readonly BillFoodConverter _billFoodConverter;
-        public BillService(ResponseObject<DataResponseBillFood> responseBillFoodObject, ResponseObject<DataResponseBillTicket> responseBillTicketObject, ResponseObject<DataResponseBill> responseObject, BillConverter billConverter, BillTicketConverter billTicketConverter, BillFoodConverter billFoodConverter)
+        public readonly AppDbContext _context;
+        public BillService(AppDbContext context, ResponseObject<DataResponseBillFood> responseBillFoodObject, ResponseObject<DataResponseBillTicket> responseBillTicketObject, ResponseObject<DataResponseBill> responseObject, BillConverter billConverter, BillTicketConverter billTicketConverter, BillFoodConverter billFoodConverter)
         {
             _responseBillFoodObject = responseBillFoodObject;
             _responseBillTicketObject = responseBillTicketObject;
@@ -26,6 +28,7 @@ namespace MovieManagement.Services.Implements
             _billConverter = billConverter;
             _billTicketConverter = billTicketConverter;
             _billFoodConverter = billFoodConverter;
+            _context = context;
         }
 
         public async Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request)
@@ -42,6 +45,7 @@ namespace MovieManagement.Services.Implements
             bill.CreateAt = DateTime.Now;
             bill.CreateTime = DateTime.Now;
             bill.Name = request.BillName;
+            bill.BillStatusId = 1;
             bill.PromotionId = promotion == null ? 0 : request.PromotionId;
             bill.BillTickets = null;
             bill.BillFoods = null;

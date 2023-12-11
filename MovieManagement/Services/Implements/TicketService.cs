@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandleGenerate;
 using MovieManagement.Payloads.Converters;
@@ -9,14 +10,16 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class TicketService :BaseService, ITicketService
+    public class TicketService : ITicketService
     {
         private readonly ResponseObject<DataResponseTicket> _responseObject;
         private readonly TicketConverter _ticketConverter;
-        public TicketService(ResponseObject<DataResponseTicket> responseObject, TicketConverter ticketConverter)
+        public readonly AppDbContext _context;
+        public TicketService(AppDbContext context, ResponseObject<DataResponseTicket> responseObject, TicketConverter ticketConverter)
         {
             _responseObject = responseObject;
             _ticketConverter = ticketConverter;
+            _context = context;
         }
 
         public async Task<ResponseObject<DataResponseTicket>> CreateTicket(Request_CreateTicket request)

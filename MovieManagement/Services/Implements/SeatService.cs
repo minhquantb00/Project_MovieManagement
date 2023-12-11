@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.Converters;
@@ -10,23 +11,25 @@ using MovieManagement.Services.Interfaces;
 
 namespace MovieManagement.Services.Implements
 {
-    public class SeatService : BaseService, ISeatService
+    public class SeatService : ISeatService
     {
         private readonly SeatConverter _seatConverter;
         private readonly ResponseObject<DataResponseRoom> _responseObjectRoom;
         private readonly RoomConverter _roomConverter;
         private readonly ResponseObject<DataResponseSeat> _responseObject;
-        public SeatService(SeatConverter seatConverter, ResponseObject<DataResponseSeat> responseObject, ResponseObject<DataResponseRoom> responseObjectRoom, RoomConverter roomConverter)
+        public readonly AppDbContext _context;
+        public SeatService(AppDbContext context, SeatConverter seatConverter, ResponseObject<DataResponseSeat> responseObject, ResponseObject<DataResponseRoom> responseObjectRoom, RoomConverter roomConverter)
         {
             _seatConverter = seatConverter;
             _responseObject = responseObject;
             _responseObjectRoom = responseObjectRoom;
             _roomConverter = roomConverter;
+            _context = context;
         }
 
         public List<Seat> CreateListSeat(int roomId, List<Request_CreateSeat> requests)
         {
-            var room =  _context.rooms.SingleOrDefault(x => x.Id == roomId);
+            var room = _context.rooms.SingleOrDefault(x => x.Id == roomId);
             if (room == null)
             {
                 return null;
@@ -34,12 +37,14 @@ namespace MovieManagement.Services.Implements
             List<Seat> list = new List<Seat>();
             foreach (var request in requests)
             {
-                Seat seat = new Seat();
-                seat.Line = request.Line;
-                seat.Number = request.Number;
-                seat.SeatTypeId = request.SeatTypeId;
-                seat.RoomId = roomId;
-                seat.SeatStatusId = 1;
+                Seat seat = new Seat
+                {
+                    Line = request.Line,
+                    Number = request.Number,
+                    SeatTypeId = request.SeatTypeId,
+                    RoomId = roomId,
+                    SeatStatusId = 1
+                };
                 list.Add(seat);
             }
             _context.seats.AddRange(list);

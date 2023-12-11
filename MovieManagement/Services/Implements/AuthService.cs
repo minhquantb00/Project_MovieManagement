@@ -16,23 +16,26 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using MovieManagement.Handle.HandlePagination;
+using MovieManagement.DataContext;
 
 namespace MovieManagement.Services.Implements
 {
-    public class AuthService : BaseService, IAuthService
+    public class AuthService : IAuthService
     {
+        public readonly AppDbContext _context;
         private readonly ResponseObject<DataResponseUser> _responseObject;
         private readonly UserConverter _userConverter;
         private readonly ResponseObject<DataResponseToken> _responseTokenObject;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AuthService(ResponseObject<DataResponseUser> responseObject, UserConverter userConverter, ResponseObject<DataResponseToken> responseTokenObject, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(AppDbContext context, ResponseObject<DataResponseUser> responseObject, UserConverter userConverter, ResponseObject<DataResponseToken> responseTokenObject, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _responseObject = responseObject;
             _userConverter = userConverter;
             _responseTokenObject = responseTokenObject;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
         #region Xử lý đăng ký và xác nhận đăng ký tài khoản
         public async Task<ResponseObject<DataResponseUser>> ConfirmCreateNewAccount(Request_ConfirmCreateAccount request)
@@ -111,7 +114,7 @@ namespace MovieManagement.Services.Implements
                     Subject = "Nhận mã xác nhận để xác nhận đăng ký tài khoản mới từ đây: ",
                     Content = $"Mã kích hoạt của bạn là: {confirmEmail.ConfirmCode}, mã này có hiệu lực là 24 tiếng"
                 });
-                return _responseObject.ResponseSuccess("Đăng ký tài khoản thành công", _userConverter.EntityToDTO(user));
+                return _responseObject.ResponseSuccess("Đăng ký tài khoản thành công, nhận mã xác nhận gửi về email để đăng ký tài khoản", _userConverter.EntityToDTO(user));
 
             }catch(Exception ex)
             {
