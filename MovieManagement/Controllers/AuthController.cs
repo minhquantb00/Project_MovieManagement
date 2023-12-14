@@ -23,12 +23,22 @@ namespace MovieManagement.Controllers
         [HttpPost("/api/auth/Register")]
         public async Task<IActionResult> Register([FromBody] Request_Register request)
         {
-            return Ok(await _iAuthService.Register(request));
+            var result = await _iAuthService.Register(request);
+            if(result == null)
+            {
+                return BadRequest();
+            }
+            return Ok(request);
         }
         [HttpPost("/api/auth/Login")]
         public async Task<IActionResult> Login([FromBody] Request_Login request)
         {
-            return Ok(await _iAuthService.Login(request));
+            var result = await _iAuthService.Login(request);
+            if(result == null)
+            {
+                return BadRequest();
+            }
+            return Ok(result);
         }
         [HttpPost("/api/auth/ConfirmCreateNewAccount")]
         public async Task<IActionResult> ConfirmCreateNewAccount([FromBody] Request_ConfirmCreateAccount request)
