@@ -161,6 +161,7 @@ namespace MovieManagement.Services.Implements
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
+                DataResponseUser = _userConverter.EntityToDTO(user)
             };
             return data;
         }
