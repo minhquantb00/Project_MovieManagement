@@ -24,7 +24,11 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> Register([FromBody] Request_Register request)
         {
             var result = await _iAuthService.Register(request);
-            if(result == null)
+            if(result.Status == 404)
+            {
+                return NotFound();
+            }
+            else if(result.Status == 400)
             {
                 return BadRequest();
             }
@@ -34,7 +38,11 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> Login([FromBody] Request_Login request)
         {
             var result = await _iAuthService.Login(request);
-            if(result == null)
+            if (result.Status == 404)
+            {
+                return NotFound();
+            }
+            else if (result.Status == 400)
             {
                 return BadRequest();
             }
