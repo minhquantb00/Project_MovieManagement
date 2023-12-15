@@ -26,11 +26,11 @@ namespace MovieManagement.Controllers
             var result = await _iAuthService.Register(request);
             if(result.Status == 404)
             {
-                return NotFound();
+                return NotFound(result);
             }
             else if(result.Status == 400)
             {
-                return BadRequest();
+                return BadRequest(result);
             }
             return Ok(request);
         }
@@ -40,11 +40,11 @@ namespace MovieManagement.Controllers
             var result = await _iAuthService.Login(request);
             if (result.Status == 404)
             {
-                return NotFound();
+                return NotFound(result);
             }
             else if (result.Status == 400)
             {
-                return BadRequest();
+                return BadRequest(result);
             }
             return Ok(result);
         }
