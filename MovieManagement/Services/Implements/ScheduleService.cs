@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieManagement.DataContext;
 using MovieManagement.Entities;
+using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.ScheduleRequest;
 using MovieManagement.Payloads.DataResponses.DataSchedule;
@@ -71,6 +72,20 @@ namespace MovieManagement.Services.Implements
             _context.schedules.Update(schedule);
             await _context.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Cập nhật thông tin lịch trình thành công", _converter.EntityToDTO(schedule));
+        }
+
+        public async Task<PageResult<DataResponseSchedule>> GetSchedulesByMovie(int movieId, int pageSize, int pageNumber)
+        {
+            var query = _context.schedules.Where(x => x.MovieId == movieId).Select(x => _converter.EntityToDTO(x));
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
+        }
+
+        public async Task<PageResult<DataResponseSchedule>> GetAlls(int pageSize, int pageNumber)
+        {
+            var query = _context.schedules.Select(x => _converter.EntityToDTO(x));
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
         }
     }
 }

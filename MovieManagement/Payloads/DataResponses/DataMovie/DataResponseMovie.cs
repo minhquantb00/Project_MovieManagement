@@ -1,4 +1,5 @@
 ﻿using MovieManagement.Entities;
+using MovieManagement.Payloads.DataResponses.DataSchedule;
 
 namespace MovieManagement.Payloads.DataResponses.DataMovie
 {
@@ -14,5 +15,6 @@ namespace MovieManagement.Payloads.DataResponses.DataMovie
         public string MovieTypeName { get; set; }
         public string Name { get; set; }
         public string Trailer { get; set; }
+        public IQueryable<DataResponseSchedule> Schedules { get; set; }
     }
 }
