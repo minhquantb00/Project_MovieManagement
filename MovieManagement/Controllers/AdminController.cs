@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.DataRequests.CinemaRequest;
 using MovieManagement.Payloads.DataRequests.MovieRequest;
 using MovieManagement.Payloads.DataRequests.PromotionRequest;
@@ -124,7 +125,25 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _rankCustomerService.UpdateRankCustomer(request));
         }
+        [HttpPost("CreateMovieType")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> CreateMovieType(Request_CreateMovieType request)
+        {
+            return Ok(await _movieService.CreateMovieType(request));
+        }
+        [HttpPut("UpdateMovieType")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> UpdateMovieType(Request_UpdateMovieType request)
+        {
+            return Ok(await _movieService.UpdateMovieType(request));
+        }
+        [HttpPut("DeleteMovieType/{movieTypeId}")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> DeleteMovieType([FromRoute] int movieTypeId)
+        {
+            return Ok(await _movieService.DeleteMovieType(movieTypeId));
+        }
 
-
+        
     }
 }

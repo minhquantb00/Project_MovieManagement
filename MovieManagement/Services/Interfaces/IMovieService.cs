@@ -13,5 +13,10 @@ namespace MovieManagement.Services.Interfaces
         Task<string> DeleteMovie(int movieId);
         Task<PageResult<DataResponseMovie>> GetAllMovie(int pageSize, int pageNumber);
         Task<ResponseObject<DataResponseMovie>> GetMovieById(int movieId);
+        Task<ResponseObject<DataResponseMovieType>> CreateMovieType(Request_CreateMovieType request);
+        Task<ResponseObject<DataResponseMovieType>> UpdateMovieType(Request_UpdateMovieType request);
+        Task<string> DeleteMovieType(int movieTypeId);
+        Task<PageResult<DataResponseMovieType>> GetAllMovieTypes(int pageSize, int pageNumber);
+        Task<PageResult<DataResponseMovieType>> GetMovieTypeById(int movieTypeId, int pageSize, int pageNumber);
     }
 }

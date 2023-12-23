@@ -14,13 +14,17 @@ namespace MovieManagement.Services.Implements
     public class MovieService : IMovieService
     {
         private readonly ResponseObject<DataResponseMovie> _responseObject;
+        private readonly ResponseObject<DataResponseMovieType> _responseObjectMovieType;
+        private readonly MovieTypeConverter _movieTypeConverter;
         private readonly MovieConverter _converter;
         public readonly AppDbContext _context;
-        public MovieService(MovieConverter converter, ResponseObject<DataResponseMovie> responseObject)
+        public MovieService(MovieConverter converter, ResponseObject<DataResponseMovie> responseObject, ResponseObject<DataResponseMovieType> responseObjectMovieType, MovieTypeConverter movieTypeConverter)
         {
             _converter = converter;
             _responseObject = responseObject;
             _context = new AppDbContext();
+            _responseObjectMovieType = responseObjectMovieType;
+            _movieTypeConverter = movieTypeConverter;
         }
         public async Task<ResponseObject<DataResponseMovie>> CreateMovie(Request_CreateMovie request)
         {
@@ -98,6 +102,62 @@ namespace MovieManagement.Services.Implements
             _context.movies.Update(movie);
             await _context.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Cập nhật thông tin phim thành công", _converter.EntityToDTO(movie));
+        }
+
+        public async Task<ResponseObject<DataResponseMovieType>> CreateMovieType(Request_CreateMovieType request)
+        {
+            if (string.IsNullOrWhiteSpace(request.MovieTypeName))
+            {
+                return _responseObjectMovieType.ResponseError(StatusCodes.Status400BadRequest, "Vui lòng điền đầy đủ thông tin", null);
+            }
+            MovieType movieType = new MovieType
+            {
+                MovieTypeName = request.MovieTypeName,
+                IsActive = true
+            };
+            await _context.movieTypes.AddAsync(movieType);
+            await _context.SaveChangesAsync();
+            return _responseObjectMovieType.ResponseSuccess("Tạo thể loại phim thành công", _movieTypeConverter.EntityToDTO(movieType));
+        }
+
+        public async Task<ResponseObject<DataResponseMovieType>> UpdateMovieType(Request_UpdateMovieType request)
+        {
+            var movieType = await _context.movieTypes.SingleOrDefaultAsync(x => x.Id == request.MovieTypeId);
+            if (movieType == null)
+            {
+                return _responseObjectMovieType.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thể loại phim", null);
+            }
+            movieType.MovieTypeName = request.MovieTypeName;
+            _context.movieTypes.Update(movieType);
+            await _context.SaveChangesAsync();
+            return _responseObjectMovieType.ResponseSuccess("Cập nhật thông tin thể loại phim thành công", _movieTypeConverter.EntityToDTO(movieType));
+        }
+        
+        public async Task<string> DeleteMovieType(int movieTypeId)
+        {
+            var movieType = await _context.movieTypes.SingleOrDefaultAsync(x => x.Id == movieTypeId);
+            if(movieType == null)
+            {
+                return "Không tìm thấy thể loại phim";
+            }
+            movieType.IsActive = false;
+            _context.movieTypes.Update(movieType);
+            await _context.SaveChangesAsync();
+            return "Xóa thể loại phim thành công";
+        }
+
+        public async Task<PageResult<DataResponseMovieType>> GetAllMovieTypes(int pageSize, int pageNumber)
+        {
+            var query =  _context.movieTypes.Include(x => x.Movies).AsNoTracking().Where(x => x.IsActive == true).Select(x => _movieTypeConverter.EntityToDTO(x));
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
+        }
+
+        public async Task<PageResult<DataResponseMovieType>> GetMovieTypeById(int movieTypeId, int pageSize, int pageNumber)
+        {
+            var query = _context.movieTypes.Include(x => x.Movies).AsNoTracking().Where(x => x.Id == movieTypeId && x.IsActive == true).Select(x => _movieTypeConverter.EntityToDTO(x));
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
         }
     }
 }

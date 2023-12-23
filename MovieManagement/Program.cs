@@ -63,6 +63,7 @@ builder.Services.AddScoped<IBillService, BillService>();
 
 builder.Services.AddSingleton<ResponseObject<DataResponseUser>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseToken>>();
+builder.Services.AddSingleton<ResponseObject<DataResponseMovieType>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseCinema>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseMovie>>();
 builder.Services.AddSingleton<ResponseObject<DataResponseRoom>>();
@@ -101,6 +102,7 @@ builder.Services.AddSingleton<SchedulesConverter>();
 builder.Services.AddSingleton<RoomConverter>();
 builder.Services.AddSingleton<RankCustomerConverter>();
 builder.Services.AddSingleton<PromotionConverter>();
+builder.Services.AddSingleton<MovieTypeConverter>();
 builder.Services.AddSingleton<MovieConverter>();
 builder.Services.AddSingleton<CinemaConverter>();
 builder.Services.AddSingleton<FoodConverter>();

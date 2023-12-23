@@ -93,16 +93,13 @@ namespace MovieManagement.Controllers
             return Ok(await _foodService.UpdateFood(request));
         }
         [HttpGet("GetMovieById")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
         public async Task<IActionResult> GetMovieById(int movieId)
         {
             return Ok(await _movieService.GetMovieById(movieId));
         }
         [HttpGet("GetAllMovie")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
         public async Task<IActionResult> GetAllMovie(int pageSize = 10, int pageNumber = 1)
         {
-            pageSize = -1;
             return Ok(await _movieService.GetAllMovie(pageSize, pageNumber));
         }
         [HttpPost("CreateListRoom")]
@@ -149,10 +146,15 @@ namespace MovieManagement.Controllers
             return Ok(await _seatService.UpdateSeat(roomId, requests));
         }
         [HttpGet("GetSchedulesByMovie")]
-        [Authorize(Roles = "Admin, Manager, Staff")]
         public async Task<IActionResult> GetSchedulesByMovie(int movieId, int pageSize = 10, int pageNumber = 1)
         {
             return Ok(await _scheduleService.GetSchedulesByMovie(movieId, pageSize, pageNumber));
         }
+        [HttpGet("GetAlls")]
+        public async Task<IActionResult> GetAlls(int pageSize, int pageNumber)
+        {
+            return Ok(await _scheduleService.GetAlls(pageSize, pageNumber));
+        }
+
     }
 }
