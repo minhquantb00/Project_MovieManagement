@@ -153,11 +153,14 @@ namespace MovieManagement.Services.Implements
             return result;
         }
 
-        public async Task<PageResult<DataResponseMovieType>> GetMovieTypeById(int movieTypeId, int pageSize, int pageNumber)
+        public async Task<ResponseObject<DataResponseMovieType>> GetMovieTypeById(int movieTypeId)
         {
-            var query = _context.movieTypes.Include(x => x.Movies).AsNoTracking().Where(x => x.Id == movieTypeId && x.IsActive == true).Select(x => _movieTypeConverter.EntityToDTO(x));
-            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
-            return result;
+            var movieType = await _context.movieTypes.SingleOrDefaultAsync(x => x.Id == movieTypeId);
+            if(movieType == null)
+            {
+                return _responseObjectMovieType.ResponseError(StatusCodes.Status404NotFound, "Thể loại phim không tồn tại", null);
+            }
+            return _responseObjectMovieType.ResponseSuccess("Lấy dữ liệu thành công", _movieTypeConverter.EntityToDTO(movieType));
         }
     }
 }

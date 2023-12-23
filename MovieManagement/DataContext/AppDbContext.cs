@@ -5,10 +5,6 @@ namespace MovieManagement.DataContext
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-
-        }
         public AppDbContext() { }
         public DbSet<Bill> bills { get; set; }
         public DbSet<BillFood> billFoods { get; set; }
@@ -33,6 +29,7 @@ namespace MovieManagement.DataContext
         public DbSet<ConfirmEmail> confirmEmails { get; set; }
         public DbSet<RefreshToken> refreshTokens { get; set; }
         public DbSet<BillStatus> billStatuses { get; set; }
+        public DbSet<Banner> banners { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("server = QUANMOVIT\\SQLEXPRESS; database=Project_Movie; integrated security = sspi; encrypt = true; trustservercertificate = true;");

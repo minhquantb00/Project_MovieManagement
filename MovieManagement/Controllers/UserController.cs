@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataRequests.ScheduleRequest;
+using MovieManagement.Payloads.DataResponses.DataBanner;
 using MovieManagement.Payloads.DataResponses.DataMovie;
 using MovieManagement.Payloads.DataResponses.DataSchedule;
 using MovieManagement.Payloads.DataResponses.DataSeat;
@@ -149,9 +150,11 @@ namespace MovieManagement.Controllers
             return Ok(await _movieService.GetAllMovieTypes(pageSize, pageNumber));
         }
         [HttpGet("GetMovieTypeById/{movieTypeId}")]
-        public async Task<IActionResult> GetMovieTypeById([FromRoute] int movieTypeId, int pageSize, int pageNumber)
+        public async Task<IActionResult> GetMovieTypeById([FromRoute] int movieTypeId)
         {
-            return Ok(await _movieService.GetMovieTypeById(movieTypeId, pageSize, pageNumber));
+            return Ok(await _movieService.GetMovieTypeById(movieTypeId));
         }
+
+        
     }
 }

@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Handle.HandlePagination;
+using MovieManagement.Payloads.DataRequests.BannerRequest;
 using MovieManagement.Payloads.DataRequests.CinemaRequest;
 using MovieManagement.Payloads.DataRequests.MovieRequest;
 using MovieManagement.Payloads.DataRequests.PromotionRequest;
 using MovieManagement.Payloads.DataRequests.RankCustomerRequest;
 using MovieManagement.Payloads.DataRequests.SeatRequest;
 using MovieManagement.Payloads.DataRequests.TicketRequest;
+using MovieManagement.Payloads.DataResponses.DataBanner;
 using MovieManagement.Payloads.DataResponses.DataCinema;
 using MovieManagement.Payloads.DataResponses.DataMovie;
 using MovieManagement.Payloads.DataResponses.DataPromotion;
@@ -31,6 +33,7 @@ namespace MovieManagement.Controllers
         private readonly IPromotionService _promotionService;
         private readonly IMovieService _movieService;
         private readonly IFoodService _foodService;
+        private readonly IBannerService _bannerService;
         public AdminController(
             ICinemaService iCinemaService, 
             ISeatService seatService, 
@@ -40,7 +43,8 @@ namespace MovieManagement.Controllers
             IRankCustomerService rankCustomerService,
             IPromotionService promotionService,
             IMovieService movieService,
-            IFoodService foodService
+            IFoodService foodService,
+            IBannerService bannerService
             )
         {
             _iCinemaService = iCinemaService;
@@ -52,6 +56,7 @@ namespace MovieManagement.Controllers
             _promotionService = promotionService;
             _movieService = movieService;
             _foodService = foodService;
+            _bannerService = bannerService;
         }
         [HttpPost("CreateCinema")]
         [Authorize(Roles = "Admin, Manager")]
@@ -143,7 +148,33 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _movieService.DeleteMovieType(movieTypeId));
         }
-
-        
+        [HttpPost("CreateBanner")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> CreateBanner(Request_CreateBanner request)
+        {
+            return Ok(await _bannerService.CreateBanner(request));
+        }
+        [HttpDelete("DeleteBanner/{bannerId}")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> DeleteBanner([FromRoute] int bannerId)
+        {
+            return Ok(await _bannerService.DeleteBanner(bannerId));
+        }
+        [HttpGet("GetAllBanners")]
+        public async Task<IActionResult> GetAllBanners(int pageSize = 10, int pageNumber = 1)
+        {
+            return Ok(await _bannerService.GetAllBanners(pageSize, pageNumber));
+        }
+        [HttpGet("GetBannerById/{bannerId}")]
+        public async Task<IActionResult> GetBannerById([FromRoute] int bannerId)
+        {
+            return Ok(await _bannerService.GetBannerById(bannerId));
+        }
+        [HttpPut("UpdateBanner")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> UpdateBanner(Request_UpdateBanner request)
+        {
+            return Ok(await _bannerService.UpdateBanner(request));
+        }
     }
 }
