@@ -102,7 +102,7 @@ namespace MovieManagement.Controllers
         }
         [HttpPut("UpdateMovie")]
         [Authorize(Roles = "Admin, Manager")]
-        public async Task<IActionResult> UpdateMovie(Request_UpdateMovie request)
+        public async Task<IActionResult> UpdateMovie([FromForm] Request_UpdateMovie request)
         {
             return Ok(await _movieService.UpdateMovie(request));
         }

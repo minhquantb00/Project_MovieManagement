@@ -155,6 +155,10 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _scheduleService.GetAlls(pageSize, pageNumber));
         }
-
+        [HttpPut("DeleteSchedule/{scheduleId}")]
+        public async Task<IActionResult> DeleteSchedule([FromRoute] int scheduleId)
+        {
+            return Ok(await _scheduleService.DeleteSchedule(scheduleId));
+        }
     }
 }
