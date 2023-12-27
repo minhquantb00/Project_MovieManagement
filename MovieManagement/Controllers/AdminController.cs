@@ -90,6 +90,7 @@ namespace MovieManagement.Controllers
         }
         [HttpPost("CreateMovie")]
         [Authorize(Roles = "Admin, Manager")]
+        [Consumes(contentType: "multipart/form-data")]
         public async Task<IActionResult> CreateMovie([FromForm] Request_CreateMovie request)
         {
             return Ok(await _movieService.CreateMovie(request));
@@ -102,6 +103,7 @@ namespace MovieManagement.Controllers
         }
         [HttpPut("UpdateMovie")]
         [Authorize(Roles = "Admin, Manager")]
+        [Consumes(contentType: "multipart/form-data")]
         public async Task<IActionResult> UpdateMovie([FromForm] Request_UpdateMovie request)
         {
             return Ok(await _movieService.UpdateMovie(request));
@@ -150,6 +152,7 @@ namespace MovieManagement.Controllers
         }
         [HttpPost("CreateBanner")]
         [Authorize(Roles = "Admin, Manager")]
+        [Consumes(contentType: "multipart/form-data")]
         public async Task<IActionResult> CreateBanner(Request_CreateBanner request)
         {
             return Ok(await _bannerService.CreateBanner(request));
@@ -172,6 +175,7 @@ namespace MovieManagement.Controllers
         }
         [HttpPut("UpdateBanner")]
         [Authorize(Roles = "Admin, Manager")]
+        [Consumes(contentType: "multipart/form-data")]
         public async Task<IActionResult> UpdateBanner(Request_UpdateBanner request)
         {
             return Ok(await _bannerService.UpdateBanner(request));

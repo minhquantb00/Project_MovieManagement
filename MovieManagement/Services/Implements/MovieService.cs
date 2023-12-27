@@ -39,6 +39,7 @@ namespace MovieManagement.Services.Implements
                 Director = request.Director,
                 EndTime = request.EndTime,
                 Image = await HandleUploadImage.Upfile(request.Image),
+                HeroImage = await HandleUploadImage.Upfile(request.HeroImage),
                 Language = request.Language,
                 MovieDuration = request.MovieDuration,
                 MovieTypeId = request.MovieTypeId,

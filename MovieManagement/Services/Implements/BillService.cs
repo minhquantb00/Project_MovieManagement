@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieManagement.DataContext;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandleGenerate;
+using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataResponses.DataBill;
@@ -154,6 +155,23 @@ namespace MovieManagement.Services.Implements
             await _context.billTickets.AddRangeAsync(list);
             await _context.SaveChangesAsync();
             return list;
+        }
+
+        public async Task<ResponseObject<DataResponseBill>> GetPaymentHistoryByBillId(int billId)
+        {
+            var result = await _context.bills.Include(x => x.BillFoods).Include(x => x.BillTickets).AsNoTracking().SingleOrDefaultAsync(x => x.Id == billId);
+            if(result.BillStatusId == 1)
+            {
+                return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Hóa đơn vẫn chưa được thanh toán", null);
+            }
+            return _responseObject.ResponseSuccess("Thông tin thanh toán của hóa đơn", _billConverter.EntityToDTO(result));
+        }
+
+        public async Task<PageResult<DataResponseBill>> GetAllBills(int pageSize, int pageNumber)
+        {
+            var query = _context.bills.Include(x => x.BillTickets).Include(x => x.BillFoods).Where(x => x.BillStatusId == 2).Select(x => _billConverter.EntityToDTO(x));
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
         }
     }
 }

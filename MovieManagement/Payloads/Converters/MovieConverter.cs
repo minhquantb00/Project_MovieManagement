@@ -22,6 +22,7 @@ namespace MovieManagement.Payloads.Converters
                 EndTime = movie.EndTime,
                 Id = movie.Id,
                 Image = movie.Image,
+                HeroImage = movie.HeroImage,
                 Language = movie.Language,
                 MovieDuration = movie.MovieDuration,
                 MovieTypeName = _context.movieTypes.SingleOrDefault(x => x.Id == movie.MovieTypeId).MovieTypeName,

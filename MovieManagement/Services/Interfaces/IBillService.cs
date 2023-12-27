@@ -1,4 +1,5 @@
 ﻿using MovieManagement.Entities;
+using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataResponses.DataBill;
 using MovieManagement.Payloads.Responses;
@@ -12,5 +13,7 @@ namespace MovieManagement.Services.Interfaces
         Task<ResponseObject<DataResponseBillFood>> CreateBillFood(int billId, Request_CreateBillFood request);
         Task<List<BillFood>> CreateListBillFood(int billId, List<Request_CreateBillFood> requests);
         Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request);
+        Task<ResponseObject<DataResponseBill>> GetPaymentHistoryByBillId(int billId);
+        Task<PageResult<DataResponseBill>> GetAllBills(int pageSize, int pageNumber);
     }
 }

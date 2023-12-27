@@ -8,6 +8,7 @@
         public string Description { get; set; }
         public string Director { get; set; }
         public string Image { get; set; }
+        public string HeroImage { get; set; }
         public string Language { get; set; }
         public int MovieTypeId { get; set; }
         public string Name { get; set; }

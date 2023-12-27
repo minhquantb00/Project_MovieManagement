@@ -81,6 +81,7 @@ namespace MovieManagement.Controllers
         }
         [HttpPost("CreateFood")]
         [Authorize(Roles = "Admin, Manager, Staff")]
+        [Consumes(contentType: "multipart/form-data")]
         public async Task<IActionResult> CreateFood([FromForm] Request_CreateFood request)
         {
             return Ok(await _foodService.CreateFood(request));
@@ -88,6 +89,7 @@ namespace MovieManagement.Controllers
 
         [HttpPut("UpdateFood")]
         [Authorize(Roles = "Admin, Manager, Staff")]
+        [Consumes(contentType: "multipart/form-data")]
         public async Task<IActionResult> UpdateFood(Request_UpdateFood request)
         {
             return Ok(await _foodService.UpdateFood(request));
@@ -156,9 +158,22 @@ namespace MovieManagement.Controllers
             return Ok(await _scheduleService.GetAlls(pageSize, pageNumber));
         }
         [HttpPut("DeleteSchedule/{scheduleId}")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
         public async Task<IActionResult> DeleteSchedule([FromRoute] int scheduleId)
         {
             return Ok(await _scheduleService.DeleteSchedule(scheduleId));
+        }
+        [HttpGet("GetPaymentHistoryByBillId")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> GetPaymentHistoryByBillId(int billId)
+        {
+            return Ok(await _billService.GetPaymentHistoryByBillId(billId));
+        }
+        [HttpGet("GetAllBills")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public async Task<IActionResult> GetAllBills(int pageSize = 10, int pageNumber = 1)
+        {
+            return Ok(await _billService.GetAllBills(pageSize, pageNumber));
         }
     }
 }

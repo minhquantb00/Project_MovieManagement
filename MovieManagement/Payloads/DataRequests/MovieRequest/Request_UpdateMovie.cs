@@ -1,4 +1,5 @@
 ﻿using MovieManagement.Payloads.DataRequests.ScheduleRequest;
+using System.ComponentModel.DataAnnotations;
 
 namespace MovieManagement.Payloads.DataRequests.MovieRequest
 {
@@ -10,7 +11,10 @@ namespace MovieManagement.Payloads.DataRequests.MovieRequest
         public DateTime PremiereDate { get; set; }
         public string Description { get; set; }
         public string Director { get; set; }
+        [DataType(DataType.Upload)]
         public IFormFile Image { get; set; }
+        [DataType(DataType.Upload)]
+        public IFormFile HeroImage { get; set; }
         public string Language { get; set; }
         public int MovieTypeId { get; set; }
         public string Name { get; set; }
