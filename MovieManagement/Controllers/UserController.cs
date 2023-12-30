@@ -155,7 +155,10 @@ namespace MovieManagement.Controllers
             return Ok(await _movieService.GetMovieTypeById(movieTypeId));
         }
 
-        
-
+        [HttpGet("GetSchedulesByDay")]
+        public async Task<IActionResult> GetSchedulesByDay(DateTime startAt, int pageSize = 10, int pageNumber = 1)
+        {
+            return Ok(await _scheduleService.GetSchedulesByDay(startAt, pageSize, pageNumber));
+        }
     }
 }

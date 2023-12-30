@@ -12,5 +12,6 @@ namespace MovieManagement.Services.Interfaces
         Task<PageResult<DataResponseSchedule>> GetSchedulesByMovie(int movieId, int pageSize, int pageNumber);
         Task<PageResult<DataResponseSchedule>> GetAlls(int pageSize, int pageNumber);
         Task<string> DeleteSchedule(int scheduleId);
+        Task<PageResult<DataResponseSchedule>> GetSchedulesByDay(DateTime startAt, int pageSize, int pageNumber);
     }
 }

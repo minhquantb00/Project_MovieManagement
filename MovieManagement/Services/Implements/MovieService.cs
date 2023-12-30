@@ -28,18 +28,24 @@ namespace MovieManagement.Services.Implements
         }
         public async Task<ResponseObject<DataResponseMovie>> CreateMovie(Request_CreateMovie request)
         {
-            var movieType = await _context.movieTypes.SingleOrDefaultAsync(x => x.Id == request.MovieTypeId);
+            var movieType = await _context.movieTypes.FindAsync(request.MovieTypeId);
             if(movieType == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thể loại phim", null);
             }
+            var uploadTasks = new Task<string>[]
+            {
+                HandleUploadImage.Upfile(request.Image),
+                HandleUploadImage.Upfile(request.HeroImage)
+            };
+            var uploadResult = await Task.WhenAll(uploadTasks); 
             var movie = new Movie
             {
                 Description = request.Description,
                 Director = request.Director,
                 EndTime = request.EndTime,
-                Image = await HandleUploadImage.Upfile(request.Image),
-                HeroImage = await HandleUploadImage.Upfile(request.HeroImage),
+                Image = uploadResult[0],
+                HeroImage = uploadResult[1],
                 Language = request.Language,
                 MovieDuration = request.MovieDuration,
                 MovieTypeId = request.MovieTypeId,

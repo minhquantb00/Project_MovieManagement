@@ -92,33 +92,33 @@ namespace MovieManagement.Services.Implements
 
         public async Task<ResponseObject<DataResponseRoom>> UpdateSeat(int roomId, List<Request_UpdateSeat> requests)
         {
-            var room = await _context.rooms.SingleOrDefaultAsync(x => x.Id == roomId);
+            var room = await _context.rooms.Include(x => x.Seats).SingleOrDefaultAsync(x => x.Id == roomId);
             if (room == null)
             {
                 return _responseObjectRoom.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy phòng", null);
             }
-            foreach(var seat in room.Seats.ToList()){
-                foreach(var request in requests)
+
+            var seatDict = room.Seats.ToDictionary(s => s.Id, s => s);
+
+            foreach (var request in requests)
+            {
+                if (!seatDict.TryGetValue(request.SeatId, out var seat))
                 {
-                    if(request.SeatId != seat.Id || !_context.seats.Any(x => x.Id == request.SeatId))
-                    {
-                        return _responseObjectRoom.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy ghế", null);
-                    }
-                    seat.SeatStatusId = request.SeatStatusId;
-                    seat.RoomId = roomId;
-                    seat.Number = request.Number;
-                    seat.Id = request.SeatId;
-                    seat.Line = request.Line;
-                    seat.SeatTypeId = request.SeatTypeId;
-                    _context.seats.Update(seat);
-                    
+                    return _responseObjectRoom.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy ghế", null);
                 }
-                await _context.SaveChangesAsync();
+                seat.SeatStatusId = request.SeatStatusId;
+                seat.RoomId = roomId;
+                seat.Number = request.Number;
+                seat.Line = request.Line;
+                seat.SeatTypeId = request.SeatTypeId;
+
+                _context.seats.Update(seat);
             }
-            _context.rooms.Update(room);
+
             await _context.SaveChangesAsync();
             return _responseObjectRoom.ResponseSuccess("Cập nhật thông tin ghế trong phòng thành công", _roomConverter.EntityToDTO(room));
         }
+
 
     }
 }

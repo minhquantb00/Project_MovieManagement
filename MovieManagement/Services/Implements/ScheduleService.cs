@@ -105,5 +105,18 @@ namespace MovieManagement.Services.Implements
             return "Lịch trình không tồn tại";
 
         }
+
+        public async Task<PageResult<DataResponseSchedule>> GetSchedulesByDay(DateTime startAt, int pageSize, int pageNumber)
+        {
+            var query = _context.schedules
+                .Include(x => x.Movie)
+                .AsNoTracking()
+                .Where(x => x.StartAt.Date == startAt.Date)
+                .Select(x => _converter.EntityToDTO(x));
+
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
+        }
+
     }
 }
