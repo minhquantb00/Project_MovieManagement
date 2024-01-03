@@ -22,7 +22,7 @@ namespace MovieManagement.Handle.HandleImage
                 {
                     File = new FileDescription(file.FileName, stream),
                     PublicId = "xyz-abc" + "_" + DateTime.Now.Ticks + "image",
-                    Transformation = new Transformation().Width(300).Height(400).Crop("fill")
+                    Transformation = new Transformation().Width(400).Height(400).Crop("fit")
                 };
                 var uploadResult = await HandleUploadImage._cloudinary.UploadAsync(uploadParams);
                 if (uploadResult.Error != null)
