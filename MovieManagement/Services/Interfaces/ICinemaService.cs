@@ -12,5 +12,6 @@ namespace MovieManagement.Services.Interfaces
         Task<ResponseObject<DataResponseCinema>> CreateCinema(Request_CreateCinema request);
         Task<PageResult<DataResponseRoom>> GetListRoomInCinema(int cinema, int pageSize, int pageNumber);
         Task<PageResult<DataResponseCinema>> GetListCinema(int pageSize, int pageNumber);
+        Task<PageResult<DataResponseCinema>> GetCinemaByMovie(int movieId, int pageSize, int pageNumber);
     }
 }

@@ -41,7 +41,7 @@ namespace MovieManagement.Migrations
                 column: "BillStatusId",
                 principalTable: "billStatuses",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />

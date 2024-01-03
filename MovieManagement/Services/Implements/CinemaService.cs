@@ -55,6 +55,30 @@ namespace MovieManagement.Services.Implements
             return _responseObject.ResponseSuccess("Thêm rạp thành công", _cinemaConverter.EntityToDTO(cinema));
         }
 
+        public async Task<PageResult<DataResponseCinema>> GetCinemaByMovie(int movieId, int pageSize, int pageNumber)
+        {
+            var movie = await _context.movies.Include(x => x.Schedules).SingleOrDefaultAsync(x => x.Id == movieId);
+            if(movie == null)
+            {
+                throw new ArgumentNullException("Phim không tồn tại");
+            }
+            var listSchedules = _context.schedules.Include(x => x.Room).Where(x => x.MovieId == movieId).ToList();
+            var listRoom = new List<Room>();
+            foreach (var schedule in listSchedules)
+            {
+                listRoom.Add(schedule.Room);
+            }
+
+            var cinema = new List<DataResponseCinema>();
+            foreach (var room in listRoom)
+            {
+                var roomItem = _context.rooms.Include(x => x.Cinema).SingleOrDefault(x => x.Id == room.Id);
+                cinema.Add(_cinemaConverter.EntityToDTO(roomItem.Cinema));
+            }
+            var result = Pagination.GetPagedData(cinema.AsQueryable(), pageSize, pageNumber);
+            return result;
+        }
+
         public async Task<PageResult<DataResponseCinema>> GetListCinema(int pageSize, int pageNumber)
         {
             var query = _context.cinemas.Include(x => x.Room).Select(x => _cinemaConverter.EntityToDTO(x));

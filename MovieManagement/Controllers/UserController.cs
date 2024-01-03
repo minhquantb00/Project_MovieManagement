@@ -6,6 +6,7 @@ using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataRequests.ScheduleRequest;
 using MovieManagement.Payloads.DataResponses.DataBanner;
+using MovieManagement.Payloads.DataResponses.DataCinema;
 using MovieManagement.Payloads.DataResponses.DataMovie;
 using MovieManagement.Payloads.DataResponses.DataSchedule;
 using MovieManagement.Payloads.DataResponses.DataSeat;
@@ -159,6 +160,11 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> GetSchedulesByDay(DateTime startAt, int pageSize = 10, int pageNumber = 1)
         {
             return Ok(await _scheduleService.GetSchedulesByDay(startAt, pageSize, pageNumber));
+        }
+        [HttpGet("GetCinemaByMovie")]
+        public async Task<IActionResult> GetCinemaByMovie(int movieId, int pageSize = 10, int pageNumber = 1)
+        {
+            return Ok(await _iCinemaService.GetCinemaByMovie(movieId, pageSize, pageNumber));
         }
     }
 }

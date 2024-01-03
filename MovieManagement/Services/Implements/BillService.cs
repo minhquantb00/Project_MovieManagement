@@ -95,7 +95,7 @@ namespace MovieManagement.Services.Implements
 
         public async Task<ResponseObject<DataResponseBillTicket>> CreateBillTicket(int billId, Request_CreateBillTicket request)
         {
-            var bill = await _context.bills.SingleOrDefaultAsync(x => x.Id == billId);
+            var bill = await _context.bills.Include(x => x.Promotion).AsNoTracking().SingleOrDefaultAsync(x => x.Id == billId);
             if (bill == null)
             {
                 return _responseBillTicketObject.ResponseError(StatusCodes.Status404NotFound, "Hóa đơn không tồn tại", null);

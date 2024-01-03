@@ -53,7 +53,7 @@ namespace MovieManagement.Migrations
                 column: "RateId",
                 principalTable: "rates",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
     }
 }

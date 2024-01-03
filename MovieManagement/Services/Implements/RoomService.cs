@@ -100,8 +100,9 @@ namespace MovieManagement.Services.Implements
 
         public async Task<ResponseObject<DataResponseRoom>> UpdateRoom(Request_UpdateRoom request)
         {
-            var room = await _context.rooms.SingleOrDefaultAsync(x => x.Id == request.RoomId);
-            if(room == null )
+            var room = await _context.rooms.Include(x => x.Seats).AsNoTracking().SingleOrDefaultAsync(x => x.Id == request.RoomId);
+
+            if (room == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy phòng", null);
             }
@@ -110,11 +111,21 @@ namespace MovieManagement.Services.Implements
             room.Code = GenerateCode.GenerateBillCode();
             room.Description = request.Description;
             room.Type = request.Type;
-            _context.seats.RemoveRange(room.Seats);
+            var listSeat = _context.seats.Include(x => x.Tickets).AsNoTracking().Where(x => x.RoomId == room.Id).ToList();
+            foreach (var seat in listSeat)
+            {
+                var ticket = _context.tickets.Include(x => x.BillTickets).Include(x => x.Schedule).AsNoTracking().Where(x => x.SeatId == seat.Id).ToList();
+                _context.tickets.RemoveRange(ticket);
+                _context.seats.Remove(seat);
+            }
+
             room.Seats = _seatService.CreateListSeat(room.Id, request.Request_CreateSeats);
+
             _context.rooms.Update(room);
             await _context.SaveChangesAsync();
+
             return _responseObject.ResponseSuccess("Cập nhật thông tin phòng thành công", _converter.EntityToDTO(room));
         }
+
     }
 }
