@@ -86,7 +86,7 @@ namespace MovieManagement.Services.Implements
                     _context.SaveChanges();
                     string mss = _authService.SendEmail(new EmailTo
                     {
-                        Mail = _context.users.SingleOrDefault(x => x.Id == bill.Id).Email,
+                        Mail = _context.users.SingleOrDefault(x => x.Id == bill.CustomerId).Email,
                         Subject = $"Thanh Toán đơn hàng : {bill.Id}",
                         Content = BillEmailTemplate.GenerateNotificationBillEmail(bill, "THANH TOÁN ")
                     });

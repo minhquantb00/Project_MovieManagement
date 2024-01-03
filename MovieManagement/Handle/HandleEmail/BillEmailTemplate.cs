@@ -1,4 +1,5 @@
-﻿using MovieManagement.DataContext;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieManagement.DataContext;
 using MovieManagement.Entities;
 
 namespace MovieManagement.Handle.HandleEmail
@@ -7,6 +8,7 @@ namespace MovieManagement.Handle.HandleEmail
     {
         public static string GenerateNotificationBillEmail(Bill bill, string message = "")
         {
+            AppDbContext context = new AppDbContext();
             string htmlContent = $@"
             <html>
             <head>
@@ -60,7 +62,7 @@ namespace MovieManagement.Handle.HandleEmail
                         <td>{bill.TradingCode}</td>
                         <td>{bill.Name}</td>
                         <td>{bill.TotalMoney}</td>
-                        <td>{new AppDbContext().users.SingleOrDefault(x => x.Id == bill.CustomerId).Name}</td>
+                        <td>{context.users.SingleOrDefault(x => x.Id == bill.CustomerId).Name}</td>
                         <td>{bill.CreateAt}</td>
                     </tr>
                 </table>
@@ -78,10 +80,10 @@ namespace MovieManagement.Handle.HandleEmail
 
             htmlContent += $@"
                        <tr>
-                        <td style=""text-align: center;"">{new AppDbContext().billTickets.SingleOrDefault(x => x.BillId == bill.Id).Quantity}</td>
-                        <td style=""text-align: center;"">{new AppDbContext().foods.SingleOrDefault(x => x.BillFoods.Any(y => y.BillId == bill.Id)).NameOfFood}</td>
-                        <td style=""text-align: center;"">{new AppDbContext().billFoods.SingleOrDefault(x => x.BillId == bill.Id).Quantity}</td>
-                        <td colspan=""3"" style=""text-align: center;"">{bill.TotalMoney}</td>
+                        <td style=""text-align: center;"">{context.billTickets.Include(x => x.Bill).SingleOrDefault(x => x.BillId == bill.Id)?.Quantity ?? 0}</td>
+                        <td style=""text-align: center;"">{context.foods.Include(x => x.BillFoods).SingleOrDefault(x => x.BillFoods.Any(y => y.BillId == bill.Id))?.NameOfFood ?? ""}</td>
+                        <td style=""text-align: center;"">{context.billFoods.Include(x => x.Bill).SingleOrDefault(x => x.BillId == bill.Id)?.Quantity ?? 0}</td>
+                        <td colspan=""3"" style=""text-align: center;"">{bill?.TotalMoney ?? 0}</td>
                     </tr>
                 </table>
                 

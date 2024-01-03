@@ -58,7 +58,7 @@ namespace MovieManagement.Services.Implements
         public async Task<PageResult<DataResponseCinema>> GetCinemaByMovie(int movieId, int pageSize, int pageNumber)
         {
             var movie = await _context.movies.Include(x => x.Schedules).SingleOrDefaultAsync(x => x.Id == movieId);
-            if(movie == null)
+            if (movie == null)
             {
                 throw new ArgumentNullException("Phim không tồn tại");
             }
@@ -66,18 +66,27 @@ namespace MovieManagement.Services.Implements
             var listRoom = new List<Room>();
             foreach (var schedule in listSchedules)
             {
-                listRoom.Add(schedule.Room);
+                var room = schedule.Room;
+                listRoom.Add(room);
             }
 
             var cinema = new List<DataResponseCinema>();
             foreach (var room in listRoom)
             {
-                var roomItem = _context.rooms.Include(x => x.Cinema).SingleOrDefault(x => x.Id == room.Id);
-                cinema.Add(_cinemaConverter.EntityToDTO(roomItem.Cinema));
+                var roomItem = _context.rooms.Include(x => x.Cinema).Include(x => x.Schedules).AsNoTracking().Where(x => x.Id == room.Id).SingleOrDefault();
+                var cinemaItem = _context.cinemas.Include(x => x.Room).AsNoTracking().SingleOrDefault(x => x.Id == roomItem.CinemaId);
+                cinemaItem.Room = listRoom;
+                var cinemaDTO  = new DataResponseCinema();
+                cinemaDTO.NameOfCinema = cinemaItem.NameOfCinema;
+                cinemaDTO.Address = cinemaItem.Address;
+                cinemaDTO.Description = cinemaItem.Description;
+                cinemaDTO.Room = _context.rooms.Where(x => x.Id == room.Id).Select(x => _roomConverter.EntityToDTO(x));
+                cinema.Add(cinemaDTO);
             }
             var result = Pagination.GetPagedData(cinema.AsQueryable(), pageSize, pageNumber);
             return result;
         }
+
 
         public async Task<PageResult<DataResponseCinema>> GetListCinema(int pageSize, int pageNumber)
         {
