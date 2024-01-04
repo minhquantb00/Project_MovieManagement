@@ -9,6 +9,7 @@ namespace MovieManagement.Payloads.Converters
         {
             return new DataResponseBanner()
             {
+                Id = banner.Id,
                 ImageUrl = banner.ImageUrl,
                 Title = banner.Title,
             };
