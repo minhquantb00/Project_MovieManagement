@@ -112,7 +112,8 @@ namespace MovieManagement.Services.Implements
                     NameOfCinema = cinema.NameOfCinema,
                     Address = cinema.Address,
                     Description = cinema.Description,
-                    Room = group.Select(s => _roomConverter.EntityToDTO(s.Room)).AsQueryable()
+                    Room = group.Select(s => _roomConverter.EntityToDTO(s.Room)).AsQueryable(),
+                    Id = firstSchedule.Id,
                 };
 
                 cinemas.Add(cinemaDTO);

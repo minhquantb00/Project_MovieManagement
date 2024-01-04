@@ -26,6 +26,7 @@ namespace MovieManagement.Payloads.Converters
                 Name = room.Name,
                 Type = room.Type,
                 DataResponseSeats = _context.seats.Where(x => x.RoomId == room.Id).Select(x => _seatConverter.EntityToDTO(x)).AsQueryable(),
+                DataResponseSchedules = _context.schedules.Where(x => x.RoomId == room.Id).Select(x => _scheduleConverter.EntityToDTO(x)).AsQueryable()
             };
         }
     }

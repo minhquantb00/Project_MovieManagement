@@ -10,5 +10,6 @@ namespace MovieManagement.Payloads.DataResponses.DataCinema
         public string Description { get; set; }
         public string Name { get; set; }
         public IQueryable<DataResponseSeat>  DataResponseSeats { get; set; }
+        public IQueryable<DataResponseSchedule> DataResponseSchedules { get; set;}
     }
 }
