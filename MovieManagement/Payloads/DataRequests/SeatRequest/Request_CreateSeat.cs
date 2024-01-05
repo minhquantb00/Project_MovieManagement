@@ -3,7 +3,7 @@
     public class Request_CreateSeat
     {
         public int Number { get; set; }
-        public int Line { get; set; }
+        public string Line { get; set; }
         public int SeatTypeId { get; set; }
     }
 }

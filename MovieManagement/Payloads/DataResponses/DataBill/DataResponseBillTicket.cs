@@ -4,6 +4,6 @@
     {
         public int Quantity { get; set; }
         public int SeatNumber { get; set; }
-        public int SeatLine { get; set; }
+        public string SeatLine { get; set; }
     }
 }
