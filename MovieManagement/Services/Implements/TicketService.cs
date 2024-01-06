@@ -22,9 +22,9 @@ namespace MovieManagement.Services.Implements
             _context = new AppDbContext();
         }
 
-        public async Task<ResponseObject<DataResponseTicket>> CreateTicket(Request_CreateTicket request)
+        public async Task<ResponseObject<DataResponseTicket>> CreateTicket(int seatId, Request_CreateTicket request)
         {
-            var seat = await _context.seats.SingleOrDefaultAsync(x => x.Id == request.SeatId);
+            var seat = await _context.seats.SingleOrDefaultAsync(x => x.Id == seatId);
             if (seat == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy ghế", null);
@@ -36,7 +36,7 @@ namespace MovieManagement.Services.Implements
             }
             var ticket = new Ticket();
             ticket.ScheduleId = request.ScheduleId;
-            ticket.SeatId = request.SeatId;
+            ticket.SeatId = seatId;
             ticket.Code = "MyBugs_" + DateTime.Now.Ticks.ToString() + new Random().Next(1000, 9999).ToString();
             await _context.tickets.AddAsync(ticket);
             await _context.SaveChangesAsync();

@@ -61,9 +61,9 @@ namespace MovieManagement.Controllers
 
         [HttpPost("CreateTicket")]
         [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> CreateTicket(Request_CreateTicket request)
+        public async Task<IActionResult> CreateTicket(int seatId, Request_CreateTicket request)
         {
-            return Ok(await _ticketService.CreateTicket(request));
+            return Ok(await _ticketService.CreateTicket(seatId, request));
         }
         [HttpPost("UpdateTicket")]
         [Authorize(Roles = "Admin, Manager, Staff")]
