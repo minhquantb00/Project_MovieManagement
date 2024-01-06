@@ -175,5 +175,11 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _billService.GetAllBills(pageSize, pageNumber));
         }
+        [HttpPost("CreateListTicket")]
+        [Authorize(Roles = "Admin, Manager, Staff")]
+        public IActionResult CreateListTicket(int seatId, List<Request_CreateTicket> requests)
+        {
+            return Ok(_ticketService.CreateListTicket(seatId, requests));
+        }
     }
 }

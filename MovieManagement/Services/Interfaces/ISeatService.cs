@@ -16,5 +16,6 @@ namespace MovieManagement.Services.Interfaces
         Task<PageResult<DataResponseSeat>> GetAllSeat(int pageSize, int pageNumber);
         Task<PageResult<DataResponseSeat>> GetSeatByStatus(int statusId, int pageSize, int pageNumber);
         Task<PageResult<DataResponseSeat>> GetSeatByRoom(int roomId, int pageSize, int pageNumber);
+        
     }
 }

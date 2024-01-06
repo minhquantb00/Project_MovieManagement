@@ -57,5 +57,29 @@ namespace MovieManagement.Services.Implements
             await _context.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Cập nhật thông tin thành công", _ticketConverter.EntityToDTO(ticket));
         }
+
+        public List<Ticket> CreateListTicket(int seatId, List<Request_CreateTicket> requests)
+        {
+            var seat = _context.seats.SingleOrDefault(x => x.Id == seatId);
+            if(seat == null)
+            {
+                throw new ArgumentNullException("Ghế không tồn tại");
+            }
+            List<Ticket> list = new List<Ticket>();
+            foreach(var request in requests)
+            {
+                Ticket item = new Ticket
+                {
+                    IsActive = true,
+                    Code = "abcd",
+                    ScheduleId = request.ScheduleId,
+                    SeatId = seatId,
+                };
+                list.Add(item);
+            }
+            _context.tickets.AddRange(list);
+            _context.SaveChanges();
+            return list;
+        }
     }
 }
