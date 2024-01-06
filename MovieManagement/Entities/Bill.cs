@@ -8,7 +8,7 @@
         public int CustomerId { get; set; }
         public string Name { get; set; }
         public DateTime CreateAt { get; set; }
-        public int PromotionId { get; set; }
+        public int? PromotionId { get; set; }
         public int BillStatusId { get; set; }
         public bool? IsActive { get; set; } = true;
         public User? Customer { get; set; }
