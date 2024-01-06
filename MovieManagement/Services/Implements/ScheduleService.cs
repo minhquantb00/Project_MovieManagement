@@ -42,7 +42,7 @@ namespace MovieManagement.Services.Implements
             schedule.EndAt = request.EndAt;
             schedule.Price = request.Price;
             schedule.Name = request.Name;
-            if(_context.schedules.Any(x => !((request.StartAt < x.StartAt && request.EndAt < x.StartAt) || (request.StartAt > x.EndAt && request.EndAt > x.EndAt))) )
+            if(_context.schedules.Any(x => !((request.StartAt < x.StartAt && request.EndAt < x.StartAt) || (request.StartAt > x.EndAt && request.EndAt > x.EndAt)) && x.RoomId == request.RoomId ))
             {
                 return _responseObject.ResponseError(StatusCodes.Status400BadRequest, "Lịch chiếu bị trùng", null);
             }
