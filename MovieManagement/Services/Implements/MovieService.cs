@@ -72,10 +72,23 @@ namespace MovieManagement.Services.Implements
             return "Xóa thông tin thành công";
         }
 
-        public async Task<PageResult<DataResponseMovie>> GetAllMovie(int pageSize, int pageNumber)
+        public async Task<PageResult<DataResponseMovie>> GetAllMovie(InputFilter input, int pageSize, int pageNumber)
         {
-            var query = _context.movies.Select(x => _converter.EntityToDTO(x));
-            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            var query = _context.movies.Include(x => x.MovieType).AsNoTracking().ToList();
+            if (input.PremiereDate.HasValue)
+            {
+                query = query.Where(x => x.PremiereDate == input.PremiereDate).ToList();
+            }
+            if (input.MovieTypeId.HasValue)
+            {
+                query = query.Where(x => x.MovieTypeId == input.MovieTypeId).ToList();
+            }
+            if (!string.IsNullOrEmpty(input.Name))
+            {
+                query = query.Where(x => x.Name.Trim().ToLower().Contains(input.Name.Trim().ToLower())).ToList();
+            }
+            var queryResult = query.Select(x => _converter.EntityToDTO(x)).AsQueryable();
+            var result = Pagination.GetPagedData(queryResult, pageSize, pageNumber);
             return result;  
         }
 

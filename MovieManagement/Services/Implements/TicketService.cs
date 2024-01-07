@@ -22,22 +22,22 @@ namespace MovieManagement.Services.Implements
             _context = new AppDbContext();
         }
 
-        public async Task<ResponseObject<DataResponseTicket>> CreateTicket(int seatId, Request_CreateTicket request)
+        public async Task<ResponseObject<DataResponseTicket>> CreateTicket(int scheduleId, Request_CreateTicket request)
         {
-            var seat = await _context.seats.SingleOrDefaultAsync(x => x.Id == seatId);
+            var seat = await _context.seats.SingleOrDefaultAsync(x => x.Id == request.SeatId);
             if (seat == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy ghế", null);
             }
-            var schedule = await _context.schedules.SingleOrDefaultAsync(x => x.Id == request.ScheduleId);
+            var schedule = await _context.schedules.SingleOrDefaultAsync(x => x.Id == scheduleId);
             if(schedule == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thông tin", null);
             }
             var ticket = new Ticket();
-            ticket.ScheduleId = request.ScheduleId;
-            ticket.SeatId = seatId;
-            ticket.Code = "MyBugs_" + DateTime.Now.Ticks.ToString() + new Random().Next(1000, 9999).ToString();
+            ticket.ScheduleId = scheduleId;
+            ticket.SeatId = request.SeatId;
+            ticket.Code = "Movie_" + DateTime.Now.Ticks.ToString() + new Random().Next(1000, 9999).ToString();
             await _context.tickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Tạo vé thành công", _ticketConverter.EntityToDTO(ticket));
@@ -58,12 +58,12 @@ namespace MovieManagement.Services.Implements
             return _responseObject.ResponseSuccess("Cập nhật thông tin thành công", _ticketConverter.EntityToDTO(ticket));
         }
 
-        public List<Ticket> CreateListTicket(int seatId, List<Request_CreateTicket> requests)
+        public List<Ticket> CreateListTicket(int scheduleId, List<Request_CreateTicket> requests)
         {
-            var seat = _context.seats.SingleOrDefault(x => x.Id == seatId);
-            if(seat == null)
+            var schedule = _context.seats.SingleOrDefault(x => x.Id == scheduleId);
+            if(scheduleId == null)
             {
-                throw new ArgumentNullException("Ghế không tồn tại");
+                throw new ArgumentNullException("Lịch chiếu không tồn tại");
             }
             List<Ticket> list = new List<Ticket>();
             foreach(var request in requests)
@@ -72,8 +72,8 @@ namespace MovieManagement.Services.Implements
                 {
                     IsActive = true,
                     Code = "abcd",
-                    ScheduleId = request.ScheduleId,
-                    SeatId = seatId,
+                    ScheduleId = scheduleId,
+                    SeatId = request.SeatId,
                 };
                 list.Add(item);
             }

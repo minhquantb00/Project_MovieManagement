@@ -6,6 +6,7 @@ using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.DataRequests.BillRequest;
 using MovieManagement.Payloads.DataRequests.CinemaRequest;
 using MovieManagement.Payloads.DataRequests.FoodRequest;
+using MovieManagement.Payloads.DataRequests.MovieRequest;
 using MovieManagement.Payloads.DataRequests.SeatRequest;
 using MovieManagement.Payloads.DataRequests.TicketRequest;
 using MovieManagement.Payloads.DataResponses.DataBill;
@@ -61,9 +62,9 @@ namespace MovieManagement.Controllers
 
         [HttpPost("CreateTicket")]
         [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> CreateTicket(int seatId, Request_CreateTicket request)
+        public async Task<IActionResult> CreateTicket(int scheduleId, Request_CreateTicket request)
         {
-            return Ok(await _ticketService.CreateTicket(seatId, request));
+            return Ok(await _ticketService.CreateTicket(scheduleId, request));
         }
         [HttpPost("UpdateTicket")]
         [Authorize(Roles = "Admin, Manager, Staff")]
@@ -100,9 +101,9 @@ namespace MovieManagement.Controllers
             return Ok(await _movieService.GetMovieById(movieId));
         }
         [HttpGet("GetAllMovie")]
-        public async Task<IActionResult> GetAllMovie(int pageSize = 10, int pageNumber = 1)
+        public async Task<IActionResult> GetAllMovie([FromQuery] InputFilter input, int pageSize = 10, int pageNumber = 1)
         {
-            return Ok(await _movieService.GetAllMovie(pageSize, pageNumber));
+            return Ok(await _movieService.GetAllMovie(input, pageSize, pageNumber));
         }
         [HttpPost("CreateListRoom")]
         [Authorize(Roles = "Admin, Manager, Staff")]
@@ -177,9 +178,9 @@ namespace MovieManagement.Controllers
         }
         [HttpPost("CreateListTicket")]
         [Authorize(Roles = "Admin, Manager, Staff")]
-        public IActionResult CreateListTicket(int seatId, List<Request_CreateTicket> requests)
+        public IActionResult CreateListTicket(int scheduleId, List<Request_CreateTicket> requests)
         {
-            return Ok(_ticketService.CreateListTicket(seatId, requests));
+            return Ok(_ticketService.CreateListTicket(scheduleId, requests));
         }
     }
 }
