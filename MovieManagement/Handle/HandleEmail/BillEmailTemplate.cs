@@ -62,6 +62,7 @@ namespace MovieManagement.Handle.HandleEmail
                         <td>{bill.TradingCode}</td>
                         <td>{bill.Name}</td>
                         <td>{bill.TotalMoney}</td>
+                        <td>{context.billStatuses.SingleOrDefault(x => x.Id == bill.BillStatusId).Name}</td>
                         <td>{context.users.SingleOrDefault(x => x.Id == bill.CustomerId).Name}</td>
                         <td>{bill.CreateAt}</td>
                     </tr>
