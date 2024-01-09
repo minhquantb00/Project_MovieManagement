@@ -15,6 +15,7 @@ namespace MovieManagement.Payloads.Converters
         {
             return new DataResponseSchedule
             {
+                Id = schedule.Id,
                 MovieName = _context.movies.SingleOrDefault(x => x.Id == schedule.MovieId).Name,
                 StartAt = schedule.StartAt,
                 EndAt = schedule.EndAt,

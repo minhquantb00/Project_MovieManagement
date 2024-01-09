@@ -8,6 +8,7 @@ using MovieManagement.Payloads.DataRequests.CinemaRequest;
 using MovieManagement.Payloads.DataRequests.FoodRequest;
 using MovieManagement.Payloads.DataRequests.MovieRequest;
 using MovieManagement.Payloads.DataRequests.SeatRequest;
+using MovieManagement.Payloads.DataRequests.StatisticRequest;
 using MovieManagement.Payloads.DataRequests.TicketRequest;
 using MovieManagement.Payloads.DataResponses.DataBill;
 using MovieManagement.Payloads.DataResponses.DataCinema;
@@ -15,6 +16,7 @@ using MovieManagement.Payloads.DataResponses.DataFood;
 using MovieManagement.Payloads.DataResponses.DataMovie;
 using MovieManagement.Payloads.DataResponses.DataSchedule;
 using MovieManagement.Payloads.DataResponses.DataSeat;
+using MovieManagement.Payloads.DataResponses.DataStatistics;
 using MovieManagement.Payloads.DataResponses.DataTicket;
 using MovieManagement.Payloads.Responses;
 using MovieManagement.Services.Interfaces;
@@ -181,6 +183,11 @@ namespace MovieManagement.Controllers
         public IActionResult CreateListTicket(int scheduleId, List<Request_CreateTicket> requests)
         {
             return Ok(_ticketService.CreateListTicket(scheduleId, requests));
+        }
+        [HttpGet("SalesStatistics")]
+        public async Task<IActionResult> SalesStatistics([FromQuery] InputStatistic input)
+        {
+            return Ok(await _billService.SalesStatistics(input));
         }
     }
 }
