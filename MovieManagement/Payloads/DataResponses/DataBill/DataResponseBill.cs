@@ -11,8 +11,8 @@ namespace MovieManagement.Payloads.DataResponses.DataBill
 
         public string BillStatusName { get; set; }
         public string Name { get; set; }
-        public int PromotionPercent { get; set; }
-        public IQueryable<DataResponseBillFood> BillFoods { get; set; }
-        public IQueryable<DataResponseBillTicket> BillTickets { get; set; }
+        public int? PromotionPercent { get; set; }
+        public IQueryable<DataResponseBillFood>? BillFoods { get; set; }
+        public IQueryable<DataResponseBillTicket>? BillTickets { get; set; }
     }
 }

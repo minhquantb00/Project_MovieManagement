@@ -49,7 +49,7 @@ namespace MovieManagement.Services.Implements
             bill.CreateTime = DateTime.Now;
             bill.Name = request.BillName;
             bill.BillStatusId = 1;
-            bill.PromotionId = promotion == null ? 0 : request.PromotionId;
+            bill.PromotionId = request.PromotionId == null ? null : request.PromotionId;
             bill.BillTickets = null;
             bill.BillFoods = null;
             bill.IsActive = true;
@@ -57,7 +57,7 @@ namespace MovieManagement.Services.Implements
             await _context.bills.AddAsync(bill);
             await _context.SaveChangesAsync();
             bill.BillTickets = await CreateListBillTicket(bill.Id, request.BillTickets);
-            bill.BillFoods = await CreateListBillFood(bill.Id,request.BillFoods);
+            bill.BillFoods = request.BillFoods != null ? await CreateListBillFood(bill.Id, request.BillFoods) : null;
             double priceTicket = 0;
             double priceFood = 0;
             bill.BillTickets.ForEach(x =>
@@ -65,12 +65,12 @@ namespace MovieManagement.Services.Implements
                 var ticket = _context.tickets.SingleOrDefault(y => y.Id == x.TicketId);
                 priceTicket += ticket.PriceTicket * x.Quantity;
             });
-            bill.BillFoods.ForEach(x =>
+            bill.BillFoods?.ForEach(x =>
             {
                 var food = _context.foods.SingleOrDefault(y => y.Id == x.FoodId);
                 priceFood += food.Price * x.Quantity;
             });
-            bill.TotalMoney = (priceTicket + priceFood) - ((priceTicket + priceFood) * promotion.Percent) * 1.0/100;
+            bill.TotalMoney = (priceTicket + priceFood) - ((priceTicket + priceFood) * promotion?.Percent) * 1.0/100;
             _context.bills.Update(bill);
             await _context.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Tạo hóa đơn thành công", _billConverter.EntityToDTO(bill));

@@ -26,9 +26,9 @@ namespace MovieManagement.Payloads.Converters
                 Name = bill.Name,
                 TotalMoney = bill.TotalMoney,
                 BillStatusName = _context.billStatuses.SingleOrDefault(x => x.Id == bill.BillStatusId).Name,
-                PromotionPercent = _context.promotions.SingleOrDefault(x => x.Id == bill.PromotionId).Percent,
+                PromotionPercent = _context.promotions.SingleOrDefault(x => x.Id == bill.PromotionId)?.Percent,
                 TradingCode = bill.TradingCode,
-                BillFoods = _context.billFoods.Where(x => x.BillId == bill.Id).Select(x => _billFoodConverter.EntityToDTO(x)),
+                BillFoods = _context.billFoods.Where(x => x.BillId == bill.Id)?.Select(x => _billFoodConverter.EntityToDTO(x)),
                 BillTickets = _context.billTickets.Where(x => x.BillId == bill.Id).Select(x => _billTicketConverter.EntityToDTO(x))
             };
         }
