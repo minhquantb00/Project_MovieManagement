@@ -34,47 +34,104 @@ namespace MovieManagement.Services.Implements
             _context = new AppDbContext();
         }
 
+        //public async Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request)
+        //{
+        //    var customer = await _context.users.SingleOrDefaultAsync(x => x.Id == request.CustomerId);
+        //    if(customer == null)
+        //    {
+        //        return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thông tin khách hàng", null);
+        //    }
+        //    var promotion = await _context.promotions.SingleOrDefaultAsync(x => x.Id == request.PromotionId);
+        //    var bill = new Bill();
+        //    bill.CustomerId = request.CustomerId;
+        //    bill.TradingCode = GenerateCode.GenerateBillCode();
+        //    bill.CreateAt = DateTime.Now;
+        //    bill.CreateTime = DateTime.Now;
+        //    bill.Name = request.BillName;
+        //    bill.BillStatusId = 1;
+        //    bill.PromotionId = request.PromotionId == null ? null : request.PromotionId;
+        //    bill.BillTickets = null;
+        //    bill.BillFoods = null;
+        //    bill.IsActive = true;
+        //    bill.TotalMoney = 0;
+        //    await _context.bills.AddAsync(bill);
+        //    await _context.SaveChangesAsync();
+        //    bill.BillTickets = await CreateListBillTicket(bill.Id, request.BillTickets);
+        //    bill.BillFoods = request.BillFoods != null ? await CreateListBillFood(bill.Id, request.BillFoods) : null;
+        //    double priceTicket = 0;
+        //    double priceFood = 0;
+        //    bill.BillTickets.ForEach(x =>
+        //    {
+        //        var ticket = _context.tickets.SingleOrDefault(y => y.Id == x.TicketId);
+        //        priceTicket += ticket.PriceTicket * x.Quantity;
+        //    });
+        //    bill.BillFoods?.ForEach(x =>
+        //    {
+        //        var food = _context.foods.SingleOrDefault(y => y.Id == x.FoodId);
+        //        priceFood += food.Price * x.Quantity;
+        //    });
+        //    if(request.BillFoods == null && request.PromotionId != null)
+        //    {
+        //        bill.TotalMoney = priceTicket -  ((priceTicket * promotion.Percent * 1.0)/100);
+        //    }
+        //    else if(request.BillFoods == null && request.PromotionId == null)
+        //    {
+        //        bill.TotalMoney = priceTicket;
+        //    }
+        //    bill.TotalMoney = (priceTicket + priceFood) - (((priceTicket + priceFood) * promotion?.Percent) * 1.0 / 100);
+        //    _context.bills.Update(bill);
+        //    await _context.SaveChangesAsync();
+        //    return _responseObject.ResponseSuccess("Tạo hóa đơn thành công", _billConverter.EntityToDTO(bill));
+
+        //}
         public async Task<ResponseObject<DataResponseBill>> CreateBill(Request_CreateBill request)
         {
             var customer = await _context.users.SingleOrDefaultAsync(x => x.Id == request.CustomerId);
-            if(customer == null)
+            if (customer == null)
             {
                 return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy thông tin khách hàng", null);
             }
+
             var promotion = await _context.promotions.SingleOrDefaultAsync(x => x.Id == request.PromotionId);
-            var bill = new Bill();
-            bill.CustomerId = request.CustomerId;
-            bill.TradingCode = GenerateCode.GenerateBillCode();
-            bill.CreateAt = DateTime.Now;
-            bill.CreateTime = DateTime.Now;
-            bill.Name = request.BillName;
-            bill.BillStatusId = 1;
-            bill.PromotionId = request.PromotionId == null ? null : request.PromotionId;
-            bill.BillTickets = null;
-            bill.BillFoods = null;
-            bill.IsActive = true;
-            bill.TotalMoney = 0;
+
+            var bill = new Bill
+            {
+                CustomerId = request.CustomerId,
+                TradingCode = GenerateCode.GenerateBillCode(),
+                CreateAt = DateTime.Now,
+                CreateTime = DateTime.Now,
+                Name = request.BillName,
+                BillStatusId = 1,
+                PromotionId = request.PromotionId,
+                BillTickets = null,
+                BillFoods = null,
+                IsActive = true,
+                TotalMoney = 0
+            };
+
             await _context.bills.AddAsync(bill);
             await _context.SaveChangesAsync();
+
             bill.BillTickets = await CreateListBillTicket(bill.Id, request.BillTickets);
             bill.BillFoods = request.BillFoods != null ? await CreateListBillFood(bill.Id, request.BillFoods) : null;
-            double priceTicket = 0;
-            double priceFood = 0;
-            bill.BillTickets.ForEach(x =>
+
+            double priceTicket = bill.BillTickets?.Sum(x => _context.tickets.SingleOrDefault(y => y.Id == x.TicketId).PriceTicket * x.Quantity) ?? 0;
+            double priceFood = bill.BillFoods?.Sum(x => _context.foods.SingleOrDefault(y => y.Id == x.FoodId).Price * x.Quantity) ?? 0;
+            double total = priceTicket + priceFood;
+
+            if (promotion != null)
             {
-                var ticket = _context.tickets.SingleOrDefault(y => y.Id == x.TicketId);
-                priceTicket += ticket.PriceTicket * x.Quantity;
-            });
-            bill.BillFoods?.ForEach(x =>
+                bill.TotalMoney = total - (total * promotion.Percent / 100.0);
+            }
+            else
             {
-                var food = _context.foods.SingleOrDefault(y => y.Id == x.FoodId);
-                priceFood += food.Price * x.Quantity;
-            });
-            bill.TotalMoney = (priceTicket + priceFood) - ((priceTicket + priceFood) * promotion?.Percent) * 1.0/100;
+                bill.TotalMoney = total;
+            }
+
             _context.bills.Update(bill);
             await _context.SaveChangesAsync();
-            return _responseObject.ResponseSuccess("Tạo hóa đơn thành công", _billConverter.EntityToDTO(bill));
 
+            return _responseObject.ResponseSuccess("Tạo hóa đơn thành công", _billConverter.EntityToDTO(bill));
         }
 
         public async Task<ResponseObject<DataResponseBillFood>> CreateBillFood(int billId, Request_CreateBillFood request)
