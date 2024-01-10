@@ -105,7 +105,7 @@ namespace MovieManagement.Services.Implements
             var billTicket = new BillTicket
             {
                 BillId = billId,
-                Quantity = 1,a
+                Quantity = 1,
                 TicketId = request.TicketId,
             };
             await _context.billTickets.AddAsync(billTicket);
