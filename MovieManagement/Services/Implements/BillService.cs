@@ -176,35 +176,37 @@ namespace MovieManagement.Services.Implements
             return result;
         }
 
+
         public async Task<IQueryable<DataStatisticSales>> SalesStatistics(InputStatistic input)
         {
             var query = _context.bills.Include(x => x.BillFoods).ThenInclude(x => x.Food)
                                       .Include(x => x.BillTickets).ThenInclude(x => x.Ticket).ThenInclude(x => x.Schedule).ThenInclude(x => x.Room).ThenInclude(x => x.Cinema)
                                       .AsNoTracking()
                                       .Where(x => x.BillStatusId == 2);
-
             if (input.CinemaId.HasValue)
             {
                 query = query.Where(x => x.BillTickets.Any(y => y.Ticket.Schedule.Room.CinemaId == input.CinemaId));
             }
             if (input.StartAt.HasValue)
             {
-                query = query.Where(x => x.CreateTime.Date >= input.StartAt.Value.Date);
+                query = query.Where(x => x.CreateAt.Date >= input.StartAt.Value.Date);
             }
             if (input.EndAt.HasValue)
             {
-                query = query.Where(x => x.CreateTime.Date <= input.EndAt.Value.Date);
+                query = query.Where(x => x.CreateAt.Date <= input.EndAt.Value.Date);
             }
 
-            var billStats = await query.GroupBy(x => x.BillTickets.FirstOrDefault().Ticket.Schedule.Room.CinemaId)
-                                       .Select(group => new DataStatisticSales
-                                       {
-                                           CinemaId = group.Key,
-                                           Sales = group.Sum(item => item.TotalMoney)
-                                       })
-                                       .ToListAsync();
+            var billStats = await query
+                .GroupBy(x => input.CinemaId.HasValue ? x.BillTickets.FirstOrDefault().Ticket.Schedule.Room.CinemaId : (int?)null)
+                .Select(group => new DataStatisticSales
+                {
+                    CinemaId = group.Key,
+                    Sales = group.Sum(item => item.TotalMoney)
+                })
+                .ToListAsync();
 
             return billStats.AsQueryable();
         }
+
     }
 }
