@@ -105,7 +105,7 @@ namespace MovieManagement.Services.Implements
             var billTicket = new BillTicket
             {
                 BillId = billId,
-                Quantity = request.Quantity,
+                Quantity = 1,a
                 TicketId = request.TicketId,
             };
             await _context.billTickets.AddAsync(billTicket);
@@ -149,7 +149,7 @@ namespace MovieManagement.Services.Implements
                 BillTicket billTicket = new BillTicket
                 {
                     BillId = billId,
-                    Quantity = request.Quantity,
+                    Quantity = 1,
                     TicketId = request.TicketId,
                 };
                 list.Add(billTicket);
