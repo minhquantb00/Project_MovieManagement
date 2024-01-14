@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.DataRequests.PaginationInputRequest;
+using MovieManagement.Payloads.DataRequests.StatisticRequest;
 using MovieManagement.Payloads.DataRequests.TokenRequest;
 using MovieManagement.Payloads.DataRequests.UserRequest;
 using MovieManagement.Payloads.DataResponses.DataUser;
@@ -90,9 +91,9 @@ namespace MovieManagement.Controllers
         }
 
         [HttpPost("/api/auth/GetAllUsers")]
-        public async Task<IActionResult> GetAllUsers([FromBody] PaginationInputUser input)
+        public async Task<IActionResult> GetAllUsers([FromQuery] InputUser input, int pageSize = 10, int pageNumber = 1)
         {
-            return Ok(await _iAuthService.GetAllUsers(input.PageSize, input.PageNumber));
+            return Ok(await _iAuthService.GetAllUsers(input, pageSize, pageNumber));
         }
         [HttpPost("/api/auth/GetListUserByRank")]
         public async Task<IActionResult> GetListUserByRank([FromBody] PaginationInputUser input)

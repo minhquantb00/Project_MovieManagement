@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using MovieManagement.Handle.HandlePagination;
 using MovieManagement.DataContext;
+using MovieManagement.Payloads.DataRequests.StatisticRequest;
 
 namespace MovieManagement.Services.Implements
 {
@@ -406,11 +407,24 @@ namespace MovieManagement.Services.Implements
         }
         #endregion
         #region Xử lý việc lấy dữ liệu người dùng
-        public async Task<PageResult<DataResponseUser>> GetAllUsers(int pageSize, int pageNumber)
+        public async Task<PageResult<DataResponseUser>> GetAllUsers(InputUser input, int pageSize, int pageNumber)
         {
-            var query =  _context.users.Select(x => _userConverter.EntityToDTO(x));
-            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
-            return result;
+            var query = await _context.users.Include(x => x.RankCustomer).AsNoTracking().OrderBy(x => x.RankCustomer.Point).Where(x => x.IsActive == true).ToListAsync();
+            if(!string.IsNullOrEmpty(input.Name))
+            {
+                query = query.Where(x => x.Name.ToLower().Contains(input.Name.ToLower())).ToList();
+            }
+            if (!string.IsNullOrEmpty(input.Email))
+            {
+                query = query.Where(x => x.Email.ToLower().Contains(input.Email.ToLower())).ToList();
+            }
+            if (input.RoleId.HasValue)
+            {
+                query = query.Where(x => x.RoleId == input.RoleId).ToList();
+            }
+            var result = query.Select(x => _userConverter.EntityToDTO(x)).AsQueryable();
+            var data = Pagination.GetPagedData(result, pageSize, pageNumber);
+            return data;
         }
         public async Task<PageResult<DataResponseUser>> GetListUserByRank(int pageSize, int pageNumber)
         {

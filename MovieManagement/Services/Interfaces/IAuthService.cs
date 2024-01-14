@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using MovieManagement.Entities;
 using MovieManagement.Handle.HandlePagination;
+using MovieManagement.Payloads.DataRequests.StatisticRequest;
 using MovieManagement.Payloads.DataRequests.TokenRequest;
 using MovieManagement.Payloads.DataRequests.UserRequest;
 using MovieManagement.Payloads.DataResponses.DataToken;
@@ -22,7 +23,7 @@ namespace MovieManagement.Services.Interfaces
         Task<string> ConfirmCreateNewPassword(Request_ConfirmCreateNewPassword request);
         Task<ResponseObject<DataResponseUser>> ChangeDecentralization(Request_ChangeDecentralization request);
         Task<ResponseObject<DataResponseUser>> UpdateUserInformation(int userId, Request_UpdateUserInformation request);
-        Task<PageResult<DataResponseUser>> GetAllUsers(int pageSize, int pageNumber);
+        Task<PageResult<DataResponseUser>> GetAllUsers(InputUser input, int pageSize, int pageNumber);
         Task<PageResult<DataResponseUser>> GetListUserByRank(int pageSize, int pageNumber);
         Task<PageResult<DataResponseUser>> GetUserByName(string name, int pageSize, int pageNumber);
     }
