@@ -186,6 +186,10 @@ namespace MovieManagement.Services.Implements
             {
                 return _responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Mật khẩu không chính xác", null);
             }
+            if(user.IsActive == false)
+            {
+                return _responseTokenObject.ResponseError(StatusCodes.Status400BadRequest, "Tài khoản đã bị xóa, vui lòng thử lại", null);
+            }
             else
             {
                 return _responseTokenObject.ResponseSuccess("Đăng nhập tài khoản thành công", GenerateAccessToken(user));
