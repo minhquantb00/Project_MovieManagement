@@ -186,7 +186,6 @@ namespace MovieManagement.Controllers
         }
         [HttpGet("SalesStatistics")]
         [Authorize(Roles = "Admin, Manager")]
-
         public async Task<IActionResult> SalesStatistics([FromQuery] InputStatistic input)
         {
             return Ok(await _billService.SalesStatistics(input));

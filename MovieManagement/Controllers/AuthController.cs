@@ -90,7 +90,7 @@ namespace MovieManagement.Controllers
             return Ok(await _iAuthService.ConfirmCreateNewPassword(request));
         }
 
-        [HttpPost("/api/auth/GetAllUsers")]
+        [HttpGet("/api/auth/GetAllUsers")]
         public async Task<IActionResult> GetAllUsers([FromQuery] InputUser input, int pageSize = 10, int pageNumber = 1)
         {
             return Ok(await _iAuthService.GetAllUsers(input, pageSize, pageNumber));

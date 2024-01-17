@@ -74,7 +74,7 @@ namespace MovieManagement.Services.Implements
 
         public async Task<PageResult<DataResponseMovie>> GetAllMovie(InputFilter input, int pageSize, int pageNumber)
         {
-            var query = _context.movies.Include(x => x.MovieType).AsNoTracking().ToList();
+            var query = _context.movies.Include(x => x.MovieType).AsNoTracking().Where(x => x.IsActive == true).ToList();
             if (input.PremiereDate.HasValue)
             {
                 query = query.Where(x => x.PremiereDate == input.PremiereDate).ToList();
@@ -94,7 +94,7 @@ namespace MovieManagement.Services.Implements
 
         public async Task<ResponseObject<DataResponseMovie>> GetMovieById(int movieId)
         {
-            var movie =  await _context.movies.SingleOrDefaultAsync(x => x.Id == movieId);
+            var movie =  await _context.movies.SingleOrDefaultAsync(x => x.Id == movieId && x.IsActive == true);
             return _responseObject.ResponseSuccess("Lấy thông tin thành công", _converter.EntityToDTO(movie));
         }
 
