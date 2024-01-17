@@ -190,5 +190,10 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _billService.SalesStatistics(input));
         }
+        [HttpGet("SalesStatisticsFood")]
+        public async Task<IActionResult> SalesStatisticsFood([FromQuery] InputFoodStatistics input)
+        {
+            return Ok(await _billService.SalesStatisticsFood(input));
+        }
     }
 }

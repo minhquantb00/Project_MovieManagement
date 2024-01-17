@@ -18,5 +18,6 @@ namespace MovieManagement.Services.Interfaces
         Task<ResponseObject<DataResponseBill>> GetPaymentHistoryByBillId(int billId);
         Task<PageResult<DataResponseBill>> GetAllBills(int pageSize, int pageNumber);
         Task<IQueryable<DataStatisticSales>> SalesStatistics(InputStatistic input);
+        Task<IQueryable<DataStatisticsFood>> SalesStatisticsFood(InputFoodStatistics input);
     }
 }

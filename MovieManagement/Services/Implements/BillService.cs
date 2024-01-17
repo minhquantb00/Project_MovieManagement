@@ -264,6 +264,40 @@ namespace MovieManagement.Services.Implements
 
             return billStats.AsQueryable();
         }
+        public async Task<IQueryable<DataStatisticsFood>> SalesStatisticsFood(InputFoodStatistics input)
+        {
+            var query = _context.bills.Include(x => x.BillFoods).ThenInclude(x => x.Food)
+                                      .AsNoTracking()
+                                      .Where(x => x.BillStatusId == 2);
+
+            if (input.FoodId.HasValue)
+            {
+                query = query.Where(x => x.BillFoods.Any(y => y.FoodId == input.FoodId));
+            }
+
+            if (input.StartAt.HasValue)
+            {
+                query = query.Where(x => x.CreateAt.Date >= input.StartAt.Value.Date);
+            }
+
+            if (input.EndAt.HasValue)
+            {
+                query = query.Where(x => x.CreateAt.Date <= input.EndAt.Value.Date);
+            }
+
+            var billFoodStats = await query
+                                       .SelectMany(x => x.BillFoods)
+                                       .Where(bf => !input.FoodId.HasValue || bf.FoodId == input.FoodId)
+                                       .GroupBy(bf => bf.FoodId)
+                                       .Select(group => new DataStatisticsFood
+                                       {
+                                           FoodId = group.Key,
+                                           Sales = group.Sum(x => x.Quantity * (x.Food.Price)),
+                                           SellNumber = group.Count()
+                                       }).ToListAsync();
+
+            return billFoodStats.AsQueryable();
+        }
 
     }
 }
