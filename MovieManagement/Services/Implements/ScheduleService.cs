@@ -92,7 +92,7 @@ namespace MovieManagement.Services.Implements
             {
                 query = query.Where(x => x.RoomId == input.RoomId).ToList();
             }
-            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            var result = Pagination.GetPagedData(query.Select(x => _converter.EntityToDTO(x)).AsQueryable(), pageSize, pageNumber);
             return result;
         }
 

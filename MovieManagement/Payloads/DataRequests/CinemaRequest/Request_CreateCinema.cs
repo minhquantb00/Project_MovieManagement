@@ -6,6 +6,6 @@
         public string Description { get; set; }
         public string Code { get; set; }
         public string NameOfCinema { get; set; }
-        public List<Request_CreateRoom> Request_CreateRooms { get; set; }
+        public List<Request_CreateRoom>? Request_CreateRooms { get; set; }
     }
 }

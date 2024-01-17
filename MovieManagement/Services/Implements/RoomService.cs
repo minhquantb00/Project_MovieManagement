@@ -25,7 +25,7 @@ namespace MovieManagement.Services.Implements
             _context = new AppDbContext();
         }
 
-        public async Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom> requests)
+        public async Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom>? requests)
         {
             var cinema = await _context.cinemas.SingleOrDefaultAsync(x => x.Id == cinemaId);
             if (cinema == null)
