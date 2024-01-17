@@ -64,6 +64,12 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _iCinemaService.CreateCinema(request));
         }
+        [HttpPost("UpdateCinema")]
+        //[Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> UpdateCinema(Request_UpdateCinema request)
+        {
+            return Ok(await _iCinemaService.UpdateCinema(request));
+        }
         [HttpPost("CreateRoom")]
         [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> CreateRoom(int cinemaId, Request_CreateRoom request)

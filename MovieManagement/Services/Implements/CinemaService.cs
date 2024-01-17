@@ -55,6 +55,44 @@ namespace MovieManagement.Services.Implements
             return _responseObject.ResponseSuccess("Thêm rạp thành công", _cinemaConverter.EntityToDTO(cinema));
         }
 
+        public async Task<ResponseObject<DataResponseCinema>> UpdateCinema(Request_UpdateCinema request)
+        {
+            var cinema = await _context.cinemas.SingleOrDefaultAsync(x => x.Id == request.CinemaId);
+            if (cinema == null)
+            {
+                return _responseObject.ResponseError(StatusCodes.Status404NotFound, "Không tìm thấy rạp", null);
+            }
+
+            cinema.Address = request.Address;
+            cinema.NameOfCinema = request.NameOfCinema;
+            cinema.Code = request.Code;
+            cinema.Description = request.Description;
+
+            if (cinema.Room != null)
+            {
+                _context.rooms.RemoveRange(cinema.Room);
+            }
+
+            _context.cinemas.Update(cinema);
+            await _context.SaveChangesAsync();
+
+            if (request.Request_UpdateRooms != null)
+            {
+                var rooms = await _roomService.CreateListRoom(cinema.Id, request.Request_UpdateRooms);
+                cinema.Room = rooms;
+            }
+            else
+            {
+                cinema.Room = null;
+            }
+
+            _context.cinemas.Update(cinema);
+            await _context.SaveChangesAsync();
+
+            return _responseObject.ResponseSuccess("Cập nhật thông tin rạp thành công", _cinemaConverter.EntityToDTO(cinema));
+        }
+
+
         public async Task<PageResult<DataResponseCinema>> GetCinemaByMovie(int movieId, int pageSize, int pageNumber)
         {
             var movie = await _context.movies.Include(x => x.Schedules).SingleOrDefaultAsync(x => x.Id == movieId);
