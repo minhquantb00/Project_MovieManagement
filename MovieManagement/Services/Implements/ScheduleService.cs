@@ -85,9 +85,13 @@ namespace MovieManagement.Services.Implements
             return result;
         }
 
-        public async Task<PageResult<DataResponseSchedule>> GetAlls(int pageSize, int pageNumber)
+        public async Task<PageResult<DataResponseSchedule>> GetAlls(InputScheduleData input, int pageSize, int pageNumber)
         {
-            var query = _context.schedules.Select(x => _converter.EntityToDTO(x));
+            var query = await _context.schedules.Include(x => x.Room).ToListAsync();
+            if (input.RoomId.HasValue)
+            {
+                query = query.Where(x => x.RoomId == input.RoomId).ToList();
+            }
             var result = Pagination.GetPagedData(query, pageSize, pageNumber);
             return result;
         }

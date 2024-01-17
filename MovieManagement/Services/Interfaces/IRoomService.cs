@@ -13,6 +13,6 @@ namespace MovieManagement.Services.Interfaces
         Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom> requests);
         Task<ResponseObject<DataResponseRoom>> UpdateRoom(Request_UpdateRoom request);
         Task<string> DeleteRoom(int roomId);
-        Task<PageResult<DataResponseRoom>> GetRoomList(int cinemaId, int pageSize, int pageNumber);
+        Task<PageResult<DataResponseRoom>> GetRoomList(int? cinemaId, int pageSize, int pageNumber);
     }
 }

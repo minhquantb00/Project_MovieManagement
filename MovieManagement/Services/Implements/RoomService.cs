@@ -91,7 +91,7 @@ namespace MovieManagement.Services.Implements
             return "Xóa phòng thành công";
         }
 
-        public async Task<PageResult<DataResponseRoom>> GetRoomList(int cinemaId, int pageSize, int pageNumber)
+        public async Task<PageResult<DataResponseRoom>> GetRoomList(int? cinemaId, int pageSize, int pageNumber)
         {
             var query = _context.rooms.Where(x => x.CinemaId == cinemaId).Select(x => _converter.EntityToDTO(x));
             var result = Pagination.GetPagedData(query, pageSize, pageNumber);

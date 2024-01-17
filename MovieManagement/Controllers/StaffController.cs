@@ -121,9 +121,8 @@ namespace MovieManagement.Controllers
         }
         [HttpGet("GetRoomList")]
         [Authorize(Roles = "Admin, Manager, Staff")]
-        public async Task<IActionResult> GetRoomList(int cinemaId, int pageSize = 10, int pageNumber = 1)
+        public async Task<IActionResult> GetRoomList(int? cinemaId, int pageSize = 10, int pageNumber = 1)
         {
-            pageSize = -1;
             return Ok(await _roomService.GetRoomList(cinemaId, pageSize, pageNumber));
         }
         [HttpPut("UpdateRoom")]
