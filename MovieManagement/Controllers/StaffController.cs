@@ -154,11 +154,6 @@ namespace MovieManagement.Controllers
         {
             return Ok(await _scheduleService.GetSchedulesByMovie(movieId, pageSize, pageNumber));
         }
-        [HttpGet("GetAlls")]
-        public async Task<IActionResult> GetAlls(int pageSize, int pageNumber)
-        {
-            return Ok(await _scheduleService.GetAlls(pageSize, pageNumber));
-        }
         [HttpPut("DeleteSchedule/{scheduleId}")]
         [Authorize(Roles = "Admin, Manager, Staff")]
         public async Task<IActionResult> DeleteSchedule([FromRoute] int scheduleId)
