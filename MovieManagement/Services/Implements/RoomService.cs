@@ -93,8 +93,12 @@ namespace MovieManagement.Services.Implements
 
         public async Task<PageResult<DataResponseRoom>> GetRoomList(int? cinemaId, int pageSize, int pageNumber)
         {
-            var query = _context.rooms.Where(x => x.CinemaId == cinemaId).Select(x => _converter.EntityToDTO(x));
-            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            var query = await _context.rooms.Include(x => x.Seats).AsNoTracking().ToListAsync();
+            if (cinemaId.HasValue)
+            {
+                query = query.Where(x => x.CinemaId == cinemaId).ToList();
+            }
+            var result = Pagination.GetPagedData(query.Select(x => _converter.EntityToDTO(x)).AsQueryable(), pageSize, pageNumber);
             return result;
         }
 
