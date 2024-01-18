@@ -55,12 +55,11 @@ namespace MovieManagement.Services.Implements
             }
             return "Vui lòng kiểm tra lại hóa đơn";
         }
-
         public async Task<string> VNPayReturn(IQueryCollection vnpayData)
         {
             string vnp_TmnCode = _configuration.GetSection("VnPay:vnp_TmnCode").Value;
             string vnp_HashSecret = _configuration.GetSection("VnPay:vnp_HashSecret").Value;
-            //var vnpayData = HttpContext.Request.Query;
+
             VNPayLibrary vnPayLibrary = new VNPayLibrary();
             foreach (var (key, value) in vnpayData)
             {
@@ -69,46 +68,64 @@ namespace MovieManagement.Services.Implements
                     vnPayLibrary.AddResponseData(key, value);
                 }
             }
+
             string billId = vnPayLibrary.GetResponseData("vnp_TxnRef");
             string vnp_ResponseCode = vnPayLibrary.GetResponseData("vnp_ResponseCode");
             string vnp_TransactionStatus = vnPayLibrary.GetResponseData("vnp_TransactionStatus");
             string vnp_SecureHash = vnPayLibrary.GetResponseData("vnp_SecureHash");
             double vnp_Amount = Convert.ToDouble(vnPayLibrary.GetResponseData("vnp_Amount"));
             bool check = vnPayLibrary.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
+
             if (check)
-            {
+            {/**/
                 if (vnp_ResponseCode == "00" && vnp_TransactionStatus == "00")
                 {
-                    var bill = _context.bills.Include(x => x.BillTickets).ThenInclude(x => x.Ticket).ThenInclude(x => x.Seat).FirstOrDefault(x => x.Id == Convert.ToInt32(billId));
-                    bill.BillStatusId  = 2;
+                    var bill = await _context.bills.Include(x => x.BillTickets)
+                                                   .ThenInclude(x => x.Ticket)
+                                                   .ThenInclude(x => x.Seat)
+                                                   .FirstOrDefaultAsync(x => x.Id == Convert.ToInt32(billId));
+
+                    if (bill == null)
+                    {
+                        return "Không tìm thấy hóa đơn";
+                    }
+
+                    bill.BillStatusId = 2;
                     bill.CreateTime = DateTime.Now;
+
                     var billTicket = bill.BillTickets.Where(x => x.BillId == bill.Id).ToList();
-                    foreach(var item in billTicket)
+                    foreach (var item in billTicket)
                     {
                         item.Ticket.IsActive = false;
                         item.Ticket.Seat.SeatStatusId = 2;
                         _context.seats.Update(item.Ticket.Seat);
-                        _context.SaveChanges();
                     }
+
                     _context.bills.Update(bill);
-                    _context.SaveChanges();
-                    string mss = _authService.SendEmail(new EmailTo
+                    await _context.SaveChangesAsync();
+
+                    var user = _context.users.FirstOrDefault(x => x.Id == bill.CustomerId);
+                    if (user != null)
                     {
-                        Mail = _context.users.SingleOrDefault(x => x.Id == bill.CustomerId).Email,
-                        Subject = $"Thanh Toán đơn hàng : {bill.Id}",
-                        Content = BillEmailTemplate.GenerateNotificationBillEmail(bill, "THANH TOÁN ")
-                    });
+                        string email = user.Email;
+                        string mss =  _authService.SendEmail(new EmailTo
+                        {
+                            Mail = email,
+                            Subject = $"Thanh Toán đơn hàng: {bill.Id}",
+                            Content = BillEmailTemplate.GenerateNotificationBillEmail(bill, "THANH TOÁN")
+                        });
+                    }
+
                     return "Giao dịch thành công đơn hàng " + bill.Id;
                 }
                 else
                 {
-                    return $"Lỗi trong khi thực hiện giao dịch Mã lỗi : {vnp_ResponseCode}";
+                    return $"Lỗi trong khi thực hiện giao dịch. Mã lỗi: {vnp_ResponseCode}";
                 }
-
             }
             else
             {
-                return "có lỗi trong quá trình xử lí ";
+                return "Có lỗi trong quá trình xử lý";
             }
         }
     }

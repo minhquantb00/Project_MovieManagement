@@ -68,25 +68,7 @@ namespace MovieManagement.Handle.HandleEmail
                     </tr>
                 </table>
                 
-                <h2>Chi tiết vé</h2>
-                <table>
-                    <tr>
-                        <th>Số lượng vé</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Số lượng</th>
-                        <th>Giá</th>
-                    </tr>";
-
-            
-
-            htmlContent += $@"
-                       <tr>
-                        <td style=""text-align: center;"">{context.billTickets.Include(x => x.Bill).SingleOrDefault(x => x.BillId == bill.Id)?.Quantity ?? 0}</td>
-                        <td style=""text-align: center;"">{context.foods.Include(x => x.BillFoods).SingleOrDefault(x => x.BillFoods.Any(y => y.BillId == bill.Id))?.NameOfFood ?? ""}</td>
-                        <td style=""text-align: center;"">{context.billFoods.Include(x => x.Bill).SingleOrDefault(x => x.BillId == bill.Id)?.Quantity ?? 0}</td>
-                        <td colspan=""3"" style=""text-align: center;"">{bill?.TotalMoney ?? 0}</td>
-                    </tr>
-                </table>
+                
                 
                 <div class=""footer"">
                     <p>Trân trọng,</p>
@@ -97,5 +79,26 @@ namespace MovieManagement.Handle.HandleEmail
 
             return htmlContent;
         }
+
+        //<h2>Chi tiết vé</h2>
+        //        <table>
+        //            <tr>
+        //                <th>Số lượng vé</th>
+        //                <th>Tên sản phẩm</th>
+        //                <th>Số lượng</th>
+        //                <th>Giá</th>
+        //            </tr>";
+
+
+
+
+        //    htmlContent += $@"
+        //               <tr>
+        //                <td style=""text-align: center;"">{context.billTickets.Include(x => x.Bill).SingleOrDefault(x => x.BillId == bill.Id)?.Quantity ?? 0}</td>
+        //                <td style=""text-align: center;"">{context.foods.Include(x => x.BillFoods).SingleOrDefault(x => x.BillFoods.Any(y => y.BillId == bill.Id))?.NameOfFood ?? ""}</td>
+        //                <td style=""text-align: center;"">{context.billFoods.Include(x => x.Bill).SingleOrDefault(x => x.BillId == bill.Id)?.Quantity ?? 0}</td>
+        //                <td colspan=""3"" style=""text-align: center;"">{bill?.TotalMoney ?? 0}</td>
+        //            </tr>
+        //        </table>
     }
 }

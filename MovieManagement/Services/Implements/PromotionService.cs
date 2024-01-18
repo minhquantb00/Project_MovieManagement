@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieManagement.DataContext;
 using MovieManagement.Entities;
+using MovieManagement.Handle.HandlePagination;
 using MovieManagement.Payloads.Converters;
 using MovieManagement.Payloads.DataRequests.PromotionRequest;
 using MovieManagement.Payloads.DataResponses.DataPromotion;
@@ -62,6 +63,13 @@ namespace MovieManagement.Services.Implements
             _context.promotions.Update(promotion);
             await _context.SaveChangesAsync();
             return _responseObject.ResponseSuccess("Cập nhật thông tin khuyến mãi thành công", _converter.EntityToDTO(promotion));
+        }
+
+        public async Task<PageResult<DataRepsonsePromotion>> GetAllPromotions(int pageSize, int pageNumber)
+        {
+            var query = _context.promotions.Select(x => _converter.EntityToDTO(x));
+            var result = Pagination.GetPagedData(query, pageSize, pageNumber);
+            return result;
         }
     }
 }

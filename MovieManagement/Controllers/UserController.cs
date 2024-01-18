@@ -8,6 +8,7 @@ using MovieManagement.Payloads.DataRequests.ScheduleRequest;
 using MovieManagement.Payloads.DataResponses.DataBanner;
 using MovieManagement.Payloads.DataResponses.DataCinema;
 using MovieManagement.Payloads.DataResponses.DataMovie;
+using MovieManagement.Payloads.DataResponses.DataPromotion;
 using MovieManagement.Payloads.DataResponses.DataSchedule;
 using MovieManagement.Payloads.DataResponses.DataSeat;
 using MovieManagement.Payloads.Responses;
@@ -171,6 +172,11 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> GetCinemaByMovie(int movieId, int pageSize = 10, int pageNumber = 1)
         {
             return Ok(await _iCinemaService.GetCinemaByMovie(movieId, pageSize, pageNumber));
+        }
+        [HttpGet("GetAllPromotions")]
+        public async Task<IActionResult> GetAllPromotions(int pageSize = 10, int pageNumber = 1)
+        {
+            return Ok(await _promotionService.GetAllPromotions(pageSize, pageNumber));
         }
     }
 }
