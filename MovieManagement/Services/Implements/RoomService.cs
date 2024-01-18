@@ -74,7 +74,7 @@ namespace MovieManagement.Services.Implements
             };
             await _context.rooms.AddAsync(room);
             await _context.SaveChangesAsync();
-            room.Seats = _seatService.CreateListSeat(room.Id, request.Request_CreateSeats);
+            room.Seats = request.Request_CreateSeats == null ? null : _seatService.CreateListSeat(room.Id, request.Request_CreateSeats);
             return _responseObject.ResponseSuccess("Thêm phòng thành công", _converter.EntityToDTO(room));
         }
 
@@ -117,9 +117,9 @@ namespace MovieManagement.Services.Implements
                 var ticket = _context.tickets.Include(x => x.BillTickets).Include(x => x.Schedule).AsNoTracking().Where(x => x.SeatId == seat.Id).ToList();
                 _context.tickets.RemoveRange(ticket);
                 _context.seats.Remove(seat);
-            }
+            }   
 
-            room.Seats = _seatService.CreateListSeat(room.Id, request.Request_CreateSeats);
+            room.Seats = request.Request_CreateSeats == null ? null : _seatService.CreateListSeat(room.Id, request.Request_CreateSeats);
 
             _context.rooms.Update(room);
             await _context.SaveChangesAsync();

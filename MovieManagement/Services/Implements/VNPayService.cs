@@ -79,9 +79,17 @@ namespace MovieManagement.Services.Implements
             {
                 if (vnp_ResponseCode == "00" && vnp_TransactionStatus == "00")
                 {
-                    var bill = _context.bills.FirstOrDefault(x => x.Id == Convert.ToInt32(billId));
+                    var bill = _context.bills.Include(x => x.BillTickets).ThenInclude(x => x.Ticket).ThenInclude(x => x.Seat).FirstOrDefault(x => x.Id == Convert.ToInt32(billId));
                     bill.BillStatusId  = 2;
                     bill.CreateTime = DateTime.Now;
+                    var billTicket = bill.BillTickets.Where(x => x.BillId == bill.Id).ToList();
+                    foreach(var item in billTicket)
+                    {
+                        item.Ticket.IsActive = false;
+                        item.Ticket.Seat.SeatStatusId = 2;
+                        _context.seats.Update(item.Ticket.Seat);
+                        _context.SaveChanges();
+                    }
                     _context.bills.Update(bill);
                     _context.SaveChanges();
                     string mss = _authService.SendEmail(new EmailTo
