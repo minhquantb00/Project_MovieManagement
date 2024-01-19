@@ -232,8 +232,6 @@ namespace MovieManagement.Services.Implements
             var result = Pagination.GetPagedData(query, pageSize, pageNumber);
             return result;
         }
-
-
         public async Task<IQueryable<DataStatisticSales>> SalesStatistics(InputStatistic input)
         {
             var query = _context.bills.Include(x => x.BillFoods).ThenInclude(x => x.Food)
@@ -254,16 +252,55 @@ namespace MovieManagement.Services.Implements
             }
 
             var billStats = await query
-                .GroupBy(x => input.CinemaId.HasValue ? x.BillTickets.FirstOrDefault().Ticket.Schedule.Room.CinemaId : (int?)null)
+                .GroupBy(x => new
+                {
+                    Month = x.CreateAt.Month,
+                    CinemaId = input.CinemaId.HasValue ? x.BillTickets.FirstOrDefault().Ticket.Schedule.Room.CinemaId : (int?)null
+                })
                 .Select(group => new DataStatisticSales
                 {
-                    CinemaId = group.Key,
-                    Sales = group.Sum(item => item.TotalMoney)
+                    MonthNumber = group.Key.Month,
+                    CinemaId = group.Key.CinemaId,
+                    Sales = group.Sum(item => item.TotalMoney),
                 })
                 .ToListAsync();
 
             return billStats.AsQueryable();
         }
+        //public async Task<IQueryable<DataStatisticsFood>> SalesStatisticsFood(InputFoodStatistics input)
+        //{
+        //    var query = _context.bills.Include(x => x.BillFoods).ThenInclude(x => x.Food)
+        //                              .AsNoTracking()
+        //                              .Where(x => x.BillStatusId == 2);
+
+        //    if (input.FoodId.HasValue)
+        //    {
+        //        query = query.Where(x => x.BillFoods.Any(y => y.FoodId == input.FoodId));
+        //    }
+
+        //    if (input.StartAt.HasValue)
+        //    {
+        //        query = query.Where(x => x.CreateAt.Date >= input.StartAt.Value.Date);
+        //    }
+
+        //    if (input.EndAt.HasValue)
+        //    {
+        //        query = query.Where(x => x.CreateAt.Date <= input.EndAt.Value.Date);
+        //    }
+
+        //    var billFoodStats = await query
+        //                               .SelectMany(x => x.BillFoods)
+        //                               .Where(bf => !input.FoodId.HasValue || bf.FoodId == input.FoodId)
+        //                               .GroupBy(bf => bf.FoodId)
+        //                               .Select(group => new DataStatisticsFood
+        //                               {
+        //                                   FoodId = group.Key,
+        //                                   Sales = group.Sum(x => x.Quantity * (x.Food.Price)),
+        //                                   SellNumber = group.Count()
+        //                               }).ToListAsync();
+
+        //    return billFoodStats.AsQueryable();
+        //}
         public async Task<IQueryable<DataStatisticsFood>> SalesStatisticsFood(InputFoodStatistics input)
         {
             var query = _context.bills.Include(x => x.BillFoods).ThenInclude(x => x.Food)
@@ -286,15 +323,20 @@ namespace MovieManagement.Services.Implements
             }
 
             var billFoodStats = await query
-                                       .SelectMany(x => x.BillFoods)
-                                       .Where(bf => !input.FoodId.HasValue || bf.FoodId == input.FoodId)
-                                       .GroupBy(bf => bf.FoodId)
-                                       .Select(group => new DataStatisticsFood
-                                       {
-                                           FoodId = group.Key,
-                                           Sales = group.Sum(x => x.Quantity * (x.Food.Price)),
-                                           SellNumber = group.Count()
-                                       }).ToListAsync();
+                .SelectMany(x => x.BillFoods)
+                .Where(bf => !input.FoodId.HasValue || bf.FoodId == input.FoodId)
+                .GroupBy(bf => new
+                {
+                    Month = bf.Bill.CreateAt.Month,
+                    FoodId = bf.FoodId
+                })
+                .Select(group => new DataStatisticsFood
+                {
+                    MonthNumber = group.Key.Month,
+                    FoodId = group.Key.FoodId,
+                    Sales = group.Sum(x => x.Quantity * x.Food.Price),
+                    SellNumber = group.Count()
+                }).ToListAsync();
 
             return billFoodStats.AsQueryable();
         }
